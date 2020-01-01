@@ -1,0 +1,48 @@
+metadata:
+  project: toy_data_set
+  phylogenetic_tree: "%(PROJDIR)%/toy_data_in/phylogentictree.txt"
+  phenotype_table: "%(PROJDIR)%/toy_data_in/phenotypes_mismatch.txt"
+  output_directory: "%(PROJDIR)%/toy_data_out_mismatch"
+  number_of_cores: 4
+
+genotype_tables:
+  tables:
+    - table: 'gpa'
+      path: "%(PROJDIR)%/toy_data_in/genotype_table_mismatch.txt"
+      preprocessing: none
+      datatype: text
+
+    - table: 'genexp'
+      path: "%(PROJDIR)%/toy_data_in/genexp_mismatch.csv"
+      preprocessing: none
+      datatype: numerical
+      delimeter: ","
+
+    - sequence: '6mer'
+      path: "%(PROJDIR)%/toy_data_in/sequences/"
+      preprocessing: l1
+      k_value: 6
+
+
+predictions:
+  - prediction: "amrprediction"
+    features:
+      - feature: "k-mer"
+        list: ['6mer']
+        validation_tuning:
+          name: "amrkmer_cv"
+          train: "treebased"
+          test: "random"
+          inner_cv: 10
+      - feature: "exp_kmer"
+        list: ["gpa","genexp"]
+        use_validation_tuning: "amrkmer_cv"
+    label_mapping:
+      1: 1
+      0: 0
+    optimize_for: "scores_f1_1"
+    reporting: ['accuracy', 'f1']
+    classifiers:
+      - classifier:
+        svm:
+        hyperparameters: "%(config)%/svm/svm_ext.json"

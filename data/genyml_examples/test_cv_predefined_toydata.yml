@@ -1,0 +1,45 @@
+metadata:
+  project: toy_data_set
+  phylogenetic_tree: "%(PROJDIR)%/toy_data_in/phylogentictree.txt"
+  phenotype_table: "%(PROJDIR)%/toy_data_in/phenotypes.txt"
+  output_directory: "%(PROJDIR)%/test_cv_predefined_toy"
+  number_of_cores: 4
+
+genotype_tables:
+  tables:
+    - table: 'gpa'
+      path: "%(PROJDIR)%/toy_data_in/genotype_table.txt"
+      preprocessing: none
+      datatype: text
+
+    - table: 'genexp'
+      path: "%(PROJDIR)%/toy_data_in/genexp.csv"
+      preprocessing: none
+      datatype: numerical
+      delimeter: ","
+
+    - sequence: '6mer'
+      path: "%(PROJDIR)%/toy_data_in/sequences/"
+      preprocessing: l1
+      k_value: 6
+
+predictions:
+  - prediction: "amrprediction"
+    label_mapping:
+      1: 1
+      0: 0
+    optimized_for: "f1_macro"
+    reporting: ['f1_pos']
+    features:
+      - feature: "union"
+        list: ['6mer','genexp','gpa']
+        predefined_cv:
+          name: predefined
+          train: "/Users/vwr33vv/Documents/projects/techday/GenoPheno/data/test_data/test_cv_toy/classification/cv/amrprediction/aggregate_based/all_drug1/cv_folds.txt"
+          test: "/Users/vwr33vv/Documents/projects/techday/GenoPheno/data/test_data/test_cv_toy/classification/cv/amrprediction/aggregate_based/all_drug1/test_fold.txt"
+          inner_cv: 10
+    classifiers:
+      svm:
+        param_config: "%(config)%/scikit_models/svm/fake.json"
+      lsvm:
+        param_config: "%(config)%/scikit_models/svm/fake.json"
