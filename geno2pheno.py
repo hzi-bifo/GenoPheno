@@ -3,7 +3,7 @@ import argparse
 import os
 import logging
 import sys
-
+from src.geno2pheno.pipeline import Geno2PhenoPipeline
 def checkArgs(args):
     '''
         This function checks the input arguments and returns the errors (if exist) otherwise reads the parameters
@@ -29,7 +29,7 @@ def checkArgs(args):
     if (not os.access(parsedArgs.genyml_path, os.F_OK)):
         err = err + "\nError: Permission denied or could not find the labels!"
         return err
-    G2P = Geno2Pheno(parsedArgs.genml_path, parsedArgs.overwrite, parsedArgs.cores)
+    G2P = Geno2PhenoPipeline(parsedArgs.genml_path, parsedArgs.overwrite)
     return False
 
 

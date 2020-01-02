@@ -1,10 +1,10 @@
 [
   {
-    "kernel": [
-      "linear"
-    ],
     "C": [
       0.001,
+      0.01,
+      0.015,
+      0.025,
       0.10,
       0.1,
       10,
@@ -12,6 +12,18 @@
       50,
       100,
       1000
-    ]
+    ],
+    "class_weight": ["balanced"],
+    "tol": [1e-06,1e-03],
+    "dual": [false],
+     "fit_intercept": [true],
+     "intercept_scaling": [1],
+     "loss": ["squared_hinge"],
+     "max_iter": [1000],
+     "multi_class": ["ovr"],
+     "penalty": ["l1"],
+     "random_state": [1],
+     "tol": [1e-06]
+
   }
 ]

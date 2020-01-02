@@ -201,7 +201,8 @@ class FileUtility(object):
 
     @staticmethod
     def remove(file_path):
-        os.remove(file_path)
+        if FileUtility.exists(file_path):
+            os.remove(file_path)
 
     @staticmethod
     def load_yaml(file_path, replace_list=[]):

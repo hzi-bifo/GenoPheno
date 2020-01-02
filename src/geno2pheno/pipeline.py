@@ -23,7 +23,8 @@ class Geno2PhenoPipeline(object):
     def __init__(self, pipeline_yaml, overwrite=True, cores=4, replace_list=[]):
 
         self.pipeline = FileUtility.load_yaml(pipeline_yaml, replace_list=replace_list)
-        self.cores = cores
+        print(self.pipeline )
+        self.number_of_cores = cores
         self.overwrite = overwrite
         self.pipeline_yaml = pipeline_yaml
 
@@ -65,9 +66,10 @@ class Geno2PhenoPipeline(object):
         self.phenotype_table_path = self.pipeline['metadata']['phenotype_table']
 
         self.output_directory = self.pipeline['metadata']['output_directory']
-        self.output_directory = self.output_directory + '/' if self.output_directory[-1] != '/' else ''
+        self.output_directory = self.output_directory + ('/' if self.output_directory[-1] != '/' else '')
 
-        self.number_of_cores = self.pipeline['metadata']['number_of_cores']
+        if 'number_of_cores' in self.pipeline['metadata']:
+            self.number_of_cores = self.pipeline['metadata']['number_of_cores']
 
         self.logger.info('Meta data has been parsed')
 
@@ -300,7 +302,7 @@ class Geno2PhenoPipeline(object):
                         if classifier == 'lsvm':
                             if self.overwrite or not FileUtility.exists(
                                     F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
-                                model = SVM(X, Y, instances, feature_names=feature_names, svm_param_config_file=config['param_config'], logger=self.logger)
+                                model = SVM(X, Y, instances, feature_names=feature_names, svm_param_config_file=config['param_config'], logger=self.logger, linear=True)
                                 model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
 
                         self.requested_results[prediction['prediction']][feature_title][phenotype][cv_name].append(classifier)

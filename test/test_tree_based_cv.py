@@ -9,6 +9,11 @@ import numpy as np
 from numpy import linalg as LA
 
 
+def test_ps_tob():
+    geno2pheno = Geno2PhenoPipeline(F"{DATA_DIR}/genyml_examples/test_pseudomona_TOB.yml", overwrite=False, cores=4,
+                                    replace_list=[('%(PROJDIR)%', f"{DATA_DIR}/test_data/"),('%(config)%', f"{DATA_DIR}/configs/")])
+
+
 def test_predefined_cv():
     geno2pheno = Geno2PhenoPipeline(F"{DATA_DIR}/genyml_examples/test_cv_predefined_toydata.yml", overwrite=False, cores=4,
                                     replace_list=[('%(PROJDIR)%', f"{DATA_DIR}/test_data/"),('%(config)%', f"{DATA_DIR}/configs/")])
@@ -31,4 +36,4 @@ def test_preprocessings():
         # TODO: add assert
         print(table, np.min(mat), np.max(mat), np.mean(mat) , mat.shape)
 
-test_predefined_cv()
+test_ps_tob()

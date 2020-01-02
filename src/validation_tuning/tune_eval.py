@@ -36,6 +36,9 @@ class TuneEvalSteps(object):
 
     def run(self, save_path, model, model_param, optimizing_score='f1_macro', n_jobs=4, overwrite=False, logger=None):
 
+        if logger:
+            logger.info(F"fine tuning is getting started..")
+
         if optimizing_score not in Scoring.metrics or optimizing_score not in Scoring.functions:
             if logger:
                 logger.error(F"the score {optimizing_score} is not defined in Scoring class")
