@@ -23,7 +23,6 @@ class Geno2PhenoPipeline(object):
     def __init__(self, pipeline_yaml, overwrite=True, cores=4, replace_list=[]):
 
         self.pipeline = FileUtility.load_yaml(pipeline_yaml, replace_list=replace_list)
-        print(self.pipeline )
         self.number_of_cores = cores
         self.overwrite = overwrite
         self.pipeline_yaml = pipeline_yaml
