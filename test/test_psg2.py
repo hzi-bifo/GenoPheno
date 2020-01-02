@@ -27,6 +27,6 @@ def test_ps_cez():
     geno2pheno = Geno2PhenoPipeline(F"{DATA_DIR}/genyml_examples/pseudomonas/test_pseudomona_CEZ.yml", overwrite=False, cores=4,
                                     replace_list=[('%(PROJDIR)%', f"{DATA_DIR}/test_data/pseudogenomics/"),('%(config)%', f"{DATA_DIR}/configs/")])
 
-test_ps_mer()
-test_ps_cez()
-test_ps_cip()
+
+test_ps_col()
+test_ps_tob()

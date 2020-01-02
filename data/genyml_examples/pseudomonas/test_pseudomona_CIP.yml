@@ -30,10 +30,17 @@ predictions:
       1: 1
       0: 0
     optimized_for: "f1_pos"
-    reporting: ['accuracy', 'f1_pos', 'f_macro']
+    reporting: ['accuracy', 'f1_pos', 'f1_macro']
     features:
       - feature: "snps"
         list: ['snps']
+        predefined_cv:
+          name: predefined
+          train: "%(PROJDIR)%/cv/Ciprofloxacin_S-vs-R_folds.txt"
+          test: "%(PROJDIR)%/cv/Ciprofloxacin_S-vs-R_test.txt"
+          inner_cv: 10
+      - feature: "GPA-GeneExp"
+        list: ['genexp','gpa_roary','gpa']
         predefined_cv:
           name: predefined
           train: "%(PROJDIR)%/cv/Ciprofloxacin_S-vs-R_folds.txt"

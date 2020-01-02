@@ -44,6 +44,6 @@ predictions:
           inner_cv: 10
     classifiers:
       svm:
-        param_config: "%(config)%/scikit_models/svm/fake.json"
+        param_config: "%(config)%/scikit_models/svm/fake_cvs.json"
       lsvm:
         param_config: "%(config)%/scikit_models/svm/fake.json"

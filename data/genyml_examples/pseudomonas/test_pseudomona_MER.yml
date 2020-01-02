@@ -31,7 +31,7 @@ predictions:
       1: 1
       0: 0
     optimized_for: "f1_pos"
-    reporting: ['accuracy', 'f1_pos', 'f_macro']
+    reporting: ['accuracy', 'f1_pos', 'f1_macro']
     features:
       - feature: "GPA-GeneExp"
         list: ['genexp','gpa_roary','gpa']
