@@ -117,10 +117,11 @@ class Geno2PhenoPipeline(object):
 
 
     def prepare_metadata_reports(self):
-
+        pass
         # create_phylogenetic tree_visualization
-        vcct=VisualizeCircularTree(self.phylogenetic_tree, overwrite=self.overwrite, logger=self.logger)
-        vcct.create_circle(F"{self.output_directory}reports/metadata_related/phylogenetic_tree", F"Phylogenetic Tree -- {self.project_name}")
+        # TODO: UNCOMMENT
+        #vcct=VisualizeCircularTree(self.phylogenetic_tree, overwrite=self.overwrite, logger=self.logger)
+        #vcct.create_circle(F"{self.output_directory}reports/metadata_related/phylogenetic_tree", F"Phylogenetic Tree -- {self.project_name}")
 
         # TODO: create phenotype relations
         # TODO: create phenotype stats
