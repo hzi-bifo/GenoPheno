@@ -43,11 +43,21 @@ class SVM:
         best_estimator = tune_eval.run(save_path, self.model, self.params_to_tune, optimizing_score=optimizing_score, n_jobs=n_jobs, overwrite=overwrite,
                       logger=logger)
 
-        if len(self.feature_names) > 0 and best_estimator.kernel == 'linear':
-            try:
-                coefficients = best_estimator.coef_.toarray().tolist()[0]
-            except:
+        if len(self.feature_names) > 0:
+            if type(best_estimator)==SVC:
+                if best_estimator.kernel == 'linear':
+                    coefficients = best_estimator.coef_.toarray().tolist()[0]
+                    sorted_idxs_of_coefficients = argsort(np.abs(coefficients).tolist(), rev=True)[0:SVM.TOP_K_features]
+                    FileUtility.save_list(F"{save_path.replace(save_path.split('/')[-3], 'feature_selection')}.txt",
+                                          ['\t'.join(['feature', 'score'])] + [
+                                              '\t'.join([self.feature_names[idx], str(coefficients[idx])]) for idx in
+                                              sorted_idxs_of_coefficients], overwrite=overwrite, logger=logger)
+
+            else:
                 coefficients = best_estimator.coef_.tolist()[0]
-            sorted_idxs_of_coefficients = argsort(np.abs(coefficients).tolist(), rev=True)[0:SVM.TOP_K_features]
-            FileUtility.save_list(F"{save_path.replace(save_path.split('/')[-3],'feature_selection')}.txt",['\t'.join(['feature', 'score'])] + ['\t'.join([self.feature_names[idx], str(coefficients[idx])]) for idx in sorted_idxs_of_coefficients],overwrite=overwrite, logger=logger)
+                sorted_idxs_of_coefficients = argsort(np.abs(coefficients).tolist(), rev=True)[0:SVM.TOP_K_features]
+                FileUtility.save_list(F"{save_path.replace(save_path.split('/')[-3], 'feature_selection')}.txt",
+                                          ['\t'.join(['feature', 'score'])] + [
+                                              '\t'.join([self.feature_names[idx], str(coefficients[idx])]) for idx in
+                                              sorted_idxs_of_coefficients], overwrite=overwrite, logger=logger)
 

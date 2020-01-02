@@ -36,4 +36,4 @@ def test_preprocessings():
         # TODO: add assert
         print(table, np.min(mat), np.max(mat), np.mean(mat) , mat.shape)
 
-test_ps_tob()
+test_predefined_cv()

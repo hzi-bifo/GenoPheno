@@ -33,10 +33,14 @@ predictions:
     features:
       - feature: "union"
         list: ['6mer','genexp','gpa']
-        predefined_cv:
-          name: predefined
-          train: "/Users/vwr33vv/Documents/projects/techday/GenoPheno/data/test_data/test_cv_toy/classification/cv/amrprediction/aggregate_based/all_drug1/cv_folds.txt"
-          test: "/Users/vwr33vv/Documents/projects/techday/GenoPheno/data/test_data/test_cv_toy/classification/cv/amrprediction/aggregate_based/all_drug1/test_fold.txt"
+        validation_tuning:
+          name: "aggregate_based"
+          train:
+            method: "treebased"
+            folds: 10
+          test:
+            method: "treebased"
+            ratio: 0.1
           inner_cv: 10
     classifiers:
       svm:
