@@ -335,8 +335,8 @@ class Geno2PhenoPipeline(object):
                                       full_res_dict['nested_cv_true_pred_list']]
                 nonnested_performance = [Scoring.functions[metric](x, y) for x, y in
                                          full_res_dict['nonnested_cv_true_pred_list']]
-                test_performance = Scoring.functions[metric](full_res_dict['test_true_pred_list'][0],
-                                                             full_res_dict['test_true_pred_list'][1])
+                # TODO: UNCOMMENT
+                test_performance = 0#Scoring.functions[metric](full_res_dict['test_true_pred_list'][0],full_res_dict['test_true_pred_list'][1])
 
                 row_table.append(
                     F"{np.round(np.mean(nested_performance), 2)} ± {np.round(np.std(nested_performance), 2)}")

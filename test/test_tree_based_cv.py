@@ -15,7 +15,7 @@ def test_ps_tob():
 
 
 def test_predefined_cv():
-    geno2pheno = Geno2PhenoPipeline(F"{DATA_DIR}/genyml_examples/test_cv_predefined_toydata.yml", overwrite=False, cores=4,
+    geno2pheno = Geno2PhenoPipeline(F"{DATA_DIR}/genyml_examples/test_cv_predefined_toydata.yml", overwrite=True, cores=4,
                                     replace_list=[('%(PROJDIR)%', f"{DATA_DIR}/test_data/"),('%(config)%', f"{DATA_DIR}/configs/")])
 
 def test_cv():
