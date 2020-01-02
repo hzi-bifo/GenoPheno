@@ -9,7 +9,7 @@ genotype_tables:
   tables:
     - table: 'genexp'
       path: "/net/sgi/metagenomics/projects/pseudo_genomics/data/gene_expression/v2/rpg_414_log.txt"
-      preprocessing: std
+      preprocessing: none
       datatype: numerical
     - table: 'gpa'
       path: "/net/sgi/metagenomics/projects/pseudo_genomics/results/featuresAnalysis/v2/gpa/annot.uniq.txt"
@@ -29,7 +29,7 @@ predictions:
     label_mapping:
       1: 1
       0: 0
-    optimized_for: "f1_pos"
+    optimized_for: "f1_macro"
     reporting: ['accuracy', 'f1_pos', 'f1_macro']
     features:
       - feature: "snps"
