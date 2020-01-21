@@ -94,7 +94,8 @@ class FileUtility(object):
     @staticmethod
     def load_obj(filename, logger=None):
         if not FileUtility.exists(filename):
-            logger.info(F"file does not exist: {filename}")
+            if logger:
+                logger.info(F"file does not exist: {filename}")
             return None
         else:
             if logger:
