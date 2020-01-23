@@ -2,8 +2,8 @@ metadata:
   project: kpneumoniae_project
   phylogenetic_tree: "%(PROJDIR)%/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"
   phenotype_table: "%(OUTDIR)%/metadata/phenotype_list_v2.txt"
-  output_directory: "%(PROJDIR)%/K_pneumoniae/KP_results/"
-  number_of_cores: 8
+  output_directory: "%(OUTDIR)%/KP_results/"
+  number_of_cores: 30
 
 genotype_tables:
   tables:

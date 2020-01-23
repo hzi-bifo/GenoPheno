@@ -1,0 +1,67 @@
+metadata:
+  project: amr
+  phylogenetic_tree: "%(PROJDIR)%/metadata/tree.txt"
+  phenotype_table: "%(PROJDIR)%/metadata/pheno_table_CLSI_S-vs-R.txt"
+  output_directory: "%(OUTDIR)%/PSG_results/"
+  number_of_cores: 40
+
+genotype_tables:
+  tables:
+    - table: 'genexp'
+      path: "/net/sgi/metagenomics/projects/pseudo_genomics/data/gene_expression/v2/rpg_414_log.txt"
+      preprocessing: none
+      datatype: numerical
+    - table: 'gpa'
+      path: "/net/sgi/metagenomics/projects/pseudo_genomics/results/featuresAnalysis/v2/gpa/annot.uniq.txt"
+      preprocessing: binary
+      datatype: text
+    - table: 'gpa_roary'
+      path: "/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/roary/v5/out_95/indels/indel_annot.txt"
+      preprocessing: binary
+      datatype: text
+    - table: 'snps'
+      path: "/net/sgi/metagenomics/projects/pseudo_genomics/results/featuresAnalysis/v2/gpa/annot.uniq.txt"
+      preprocessing: binary
+      datatype: text
+
+    - sequence: '6mer'
+      path: "/net/sgi/metagenomics/projects/pseudo_genomics/forRuben/genomes/"
+      preprocessing: l1
+      k_value: 6
+
+predictions:
+  - prediction: "amr_prediction"
+    label_mapping:
+      1: 1
+      0: 0
+    optimized_for: "f1_macro"
+    reporting: ['accuracy', 'f1_pos', 'f1_macro']
+    features:
+      - feature: "GPA-GeneExp"
+        list: ['genexp','gpa_roary','gpa']
+        validation_tuning:
+          name: "cvtree"
+          train:
+            method: "treebased"
+            folds: 10
+          test:
+            method: "treebased"
+            ratio: 0.1
+          inner_cv: 10
+      - feature: "kmer"
+        list: ["6mer"]
+        use_validation_tuning: "cvtree"
+      - feature: "snps"
+        list: ["snps"]
+        use_validation_tuning: "cvtree"
+      - feature: "genexp"
+        list: ["genexp"]
+        use_validation_tuning: "cvtree"
+      - feature: "gpa"
+        list: ['gpa_roary','gpa']
+        use_validation_tuning: "cvtree"
+    classifiers:
+      lsvm:
+        param_config: "%(config)%/scikit_models/svm/linear_svm_config.json"
+      svm:
+        param_config: "%(config)%/scikit_models/svm/svm_config.json"
