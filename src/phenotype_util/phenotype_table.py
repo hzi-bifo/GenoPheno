@@ -13,7 +13,7 @@ class PhenotypeTable(object):
 
         self.phenotype_table = pd.read_table(path, delimiter='\t')
         self.phenotypes = self.phenotype_table.columns.tolist()[1::]
-        self.instances = self.phenotype_table[self.phenotype_table.columns.tolist()[0]].tolist()
+        self.instances = self.phenotype_table[self.phenotype_table.columns.tolist()[0]].tolist()[1::]
         self.matrix = self.phenotype_table[self.phenotypes]
 
         # phenotype dictionary preparation

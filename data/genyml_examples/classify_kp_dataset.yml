@@ -1,0 +1,62 @@
+metadata:
+  project: kpneumoniae_project
+  phylogenetic_tree: "%(PROJDIR)%/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"
+  phenotype_table: "%(OUTDIR)%/metadata/phenotype_list_v2.txt"
+  output_directory: "%(PROJDIR)%/K_pneumoniae/KP_results/"
+  number_of_cores: 8
+
+genotype_tables:
+  tables:
+    - table: 'gpa'
+      path: "%(PROJDIR)%/K_pneumoniae/genotables/gpa.uniq.mat"
+      preprocessing: none
+      datatype: text
+
+    - table: 'snps'
+      path: "%(PROJDIR)%/K_pneumoniae/genotables/non-syn_SNPs.uniq.mat"
+      preprocessing: none
+      datatype: text
+
+    - sequence: '6mer'
+      path: "%(PROJDIR)%/K_pneumoniae/assemblies_renamed/"
+      preprocessing: l1
+      k_value: 6
+
+
+predictions:
+  - prediction: "huminf_pred"
+    optimized_for: "f1_pos"
+    reporting: ['f1_pos']
+    features:
+      - feature: "k-mer"
+        list: ['6mer']
+        validation_tuning:
+          name: "kmer_cv"
+          train:
+            method: "treebased"
+            folds: 10
+          test:
+            method: "treebased"
+            ratio: 0.1
+          inner_cv: 10
+      - feature: "gpa"
+        list: ["gpa"]
+        use_validation_tuning: "kmer_cv"
+      - feature: "snps"
+        list: ["snps"]
+        use_validation_tuning: "kmer_cv"
+      - feature: "snps_gpa"
+        list: ["snps", "gpa"]
+        use_validation_tuning: "kmer_cv"
+      - feature: "all_features"
+        list: ["snps", "gpa","6mer"]
+        use_validation_tuning: "kmer_cv"
+    label_mapping:
+      "Human_infection": 1
+      "Human_invasive": 1
+      "Human_carriage": 0
+    classifiers:
+      svm:
+          param_config: "%(config)%/scikit_models/svm/svm_config.json"
+      lsvm:
+          param_config: "%(config)%/scikit_models/svm/linear_svm_config.json"

@@ -127,10 +127,15 @@ class TreeBasedKFold(_BaseKFold):
             else:
                 raise ValueError("The provided path to save the tree-based CV does not exist")
 
-            # TODO: UNCOMENT
-            #if save_tree:
-            #    self.save_tree(f"{save_directory}/tree_cv_train_{train_description}{'_test_'+test_description if test_description else ''}{'_'+tag_setting if tag_setting else ''}", "Visualization of Cross-validation Folds over the Phylogenetic Tree")
-
+            if save_tree:
+                try:
+                    self.save_tree(f"{save_directory}/tree_cv_train_{train_description}{'_test_'+test_description if test_description else ''}{'_'+tag_setting if tag_setting else ''}", "Visualization of Cross-validation Folds over the Phylogenetic Tree")
+                    if logger:
+                        logger.info(
+                            f"the annotated tree is saved at: {save_directory}/tree_cv_train_{train_description}{'_test_' + test_description if test_description else ''}{'_' + tag_setting if tag_setting else ''}")
+                except:
+                    if logger:
+                        logger.info(f"problem with saving the tree")
         self.make_partition()
 
 
@@ -253,11 +258,14 @@ class TreeBasedKFold(_BaseKFold):
                 if logger:
                     logger.error(f"The provided path to save the tree-based CV does not exist")
 
-            # TODO: UNCOMMENT
-            #if save_tree:
-            #    self.save_tree(f"{save_directory}/tree_cv_train_{train_description}{'_test_'+test_description if test_description else ''}{'_'+tag_setting if tag_setting else ''}", "Visualization of Cross-validation Folds over the Phylogenetic Tree")
-            #    if logger:
-            #        logger.info(f"the annotated tree is saved at: {save_directory}/tree_cv_train_{train_description}{'_test_'+test_description if test_description else ''}{'_'+tag_setting if tag_setting else ''}")
+            if save_tree:
+                try:
+                    self.save_tree(f"{save_directory}/tree_cv_train_{train_description}{'_test_'+test_description if test_description else ''}{'_'+tag_setting if tag_setting else ''}", "Visualization of Cross-validation Folds over the Phylogenetic Tree")
+                    if logger:
+                        logger.info(f"the annotated tree is saved at: {save_directory}/tree_cv_train_{train_description}{'_test_'+test_description if test_description else ''}{'_'+tag_setting if tag_setting else ''}")
+                except:
+                    if logger:
+                        logger.info(f"problem with saving the tree")
 
         self.make_partition()
 

@@ -142,7 +142,9 @@ class Geno2PhenoPipeline(object):
                 if 'sequence' in table:
                     # TODO: add preprocessing for k-mers
                     # TODO: add bpe unit
-                    GenotypeVectorizer.create_seq_kmer_table(F"{self.output_directory}intermediate_representations/",
+                    if self.overwrite or (not FileUtility.exists(F"{self.output_directory}intermediate_representations/{table['sequence']}_feature_data.npz") or not FileUtility.exists(F"{self.output_directory}intermediate_representations/{table['sequence']}_feature_names.txt") or not FileUtility.exists
+                        (F"{self.output_directory}intermediate_representations/{table['sequence']}_instances.txt")):
+                        GenotypeVectorizer.create_seq_kmer_table(F"{self.output_directory}intermediate_representations/",
                                                              table['path'], table['sequence'],
                                                              kvalue=table['k_value'], n_cores=self.number_of_cores,
                                                              logger=self.logger,overwrite=self.overwrite)
@@ -245,7 +247,7 @@ class Geno2PhenoPipeline(object):
                         inner_cv = validation_tuning_setting['inner_cv']
                         self.kfold_settings[F"{validation_tuning_setting['name']}>{phenotype}"].set_tree_instances_testratio_list(self.phylogenetic_tree, instances, y=Y, test_ratio=test_ratio, random_state= random_state, save_tree=save_tree,save_directory=save_directory,tag_setting=tag_setting,test_split_method=test_split_method, train_split_method=train_split_method, overwrite=self.overwrite, logger=self.logger)
 
-                    if 'predefined_cv' in feature:
+                    elif 'predefined_cv' in feature:
                         # read the tune/eval setting
                         predefined_cv = feature['predefined_cv']
                         cv_name = predefined_cv['name']
@@ -284,6 +286,7 @@ class Geno2PhenoPipeline(object):
                         self.kfold_settings[current_cv].load_predefined_folds(
                             self.phylogenetic_tree, instances, train_path, test_path, y=Y, save_directory=save_directory, tag_setting=tag_setting, save_tree=True, overwrite=self.overwrite, logger=self.logger)
 
+
                     if cv_name not in self.requested_results[prediction['prediction']][feature_title][phenotype]:
                         self.requested_results[prediction['prediction']][feature_title][phenotype][cv_name] = []
 
@@ -294,15 +297,16 @@ class Geno2PhenoPipeline(object):
                         FileUtility.ensure_dir(F"{self.output_directory}classification/{prediction['prediction']}/", self.logger)
                         FileUtility.ensure_dir(F"{self.output_directory}feature_selection/{prediction['prediction']}/", self.logger)
 
-                        if classifier == 'svm':
-                            if self.overwrite or not FileUtility.exists(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
-                                model = SVM(X, Y, instances, feature_names=feature_names, svm_param_config_file=config['param_config'], logger=self.logger)
-                                model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
-
                         if classifier == 'lsvm':
                             if self.overwrite or not FileUtility.exists(
                                     F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
                                 model = SVM(X, Y, instances, feature_names=feature_names, svm_param_config_file=config['param_config'], logger=self.logger, linear=True)
+                                model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
+
+                        if classifier == 'svm':
+                            if self.overwrite or not FileUtility.exists(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
+
+                                model = SVM(X, Y, instances, feature_names=feature_names, svm_param_config_file=config['param_config'], logger=self.logger)
                                 model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
 
                         self.requested_results[prediction['prediction']][feature_title][phenotype][cv_name].append(classifier)
