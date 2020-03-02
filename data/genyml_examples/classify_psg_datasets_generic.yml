@@ -3,7 +3,6 @@ metadata:
   phylogenetic_tree: "%(PROJDIR)%/common/tree.txt"
   phenotype_table: "%(PROJDIR)%/%(DRUG)%/labels.csv"
   output_directory: "%(OUTDIR)%/%(DRUG)%/"
-  number_of_cores: 40
 
 genotype_tables:
   tables:
