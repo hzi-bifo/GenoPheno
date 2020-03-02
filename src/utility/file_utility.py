@@ -20,7 +20,7 @@ from scipy import sparse
 import yaml
 import shutil
 import json
-
+import tqdm
 class FileUtility(object):
 
     def __init__(self):
@@ -41,10 +41,10 @@ class FileUtility(object):
         '''
         corpus = []
         if file_name_sample[-1] == 'q':
-            for cur_record in SeqIO.parse(file_name_sample, "fastq"):
+            for cur_record in tqdm.tqdm(SeqIO.parse(file_name_sample, "fastq")):
                 corpus.append(str(cur_record.seq).lower())
         else:
-            for cur_record in SeqIO.parse(file_name_sample, "fasta"):
+            for cur_record in tqdm.tqdm(SeqIO.parse(file_name_sample, "fasta")):
                 corpus.append(str(cur_record.seq).lower())
         return file_name_sample.split('/')[-1], corpus
 
@@ -56,10 +56,10 @@ class FileUtility(object):
         '''
         corpus = []
         if file_name_sample[-1] == 'q':
-            for cur_record in SeqIO.parse(file_name_sample, "fastq"):
+            for cur_record in tqdm.tqdm(SeqIO.parse(file_name_sample, "fastq")):
                 corpus.append(str(cur_record.seq).lower())
         else:
-            for cur_record in SeqIO.parse(file_name_sample, "fasta"):
+            for cur_record in tqdm.tqdm(SeqIO.parse(file_name_sample, "fasta")):
                 corpus.append(str(cur_record.seq).lower())
         return file_name_sample.split('/')[-1], len(corpus)
 

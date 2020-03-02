@@ -1,0 +1,52 @@
+metadata:
+  project: toy_data_set
+  phylogenetic_tree: "/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"
+  phenotype_table: "/net/sgi/metagenomics/projects/pseudo_genomics/data/K_pneumoniae/v2/list/phenotype_list"
+  output_directory: "/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/GenoPheno_KP/"
+  number_of_cores: 20
+
+genotype_tables:
+  tables:
+    - table: 'gpa'
+      path: "/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/gpa.uniq.mat"
+      preprocessing: none
+      datatype: text
+
+    - table: 'snps'
+      path: "/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/non-syn-SNPs.uniq.mat"
+      preprocessing: none
+      datatype: text
+
+    - sequence: '6mer'
+      path: "/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/assemblies_renamed/"
+      preprocessing: l1
+      k_value: 6
+
+
+predictions:
+  - prediction: "amrprediction"
+    features:
+      - feature: "k-mer"
+        list: ['6mer']
+        validation_tuning:
+          name: "amrkmer_cv"
+          train: "treebased"
+          test: "random"
+          inner_cv: 10
+      - feature: "gpa"
+        list: ["gpa"]
+        use_validation_tuning: "amrkmer_cv"
+      - feature: "snps"
+        list: ["snps"]
+        use_validation_tuning: "amrkmer_cv"
+    label_mapping:
+      "Human_infection": 1
+      "Human_invasive": 1
+      "Human_carriage": 0
+    optimize_for: "scores_f1_1"
+    classifiers:
+      - classifier:
+        svm:
+          param_config: "%(config)%/scikit_models/svm/svm_config.json"
+        lsvm:
+          param_config: "%(config)%/scikit_models/svm/linear_svm_config.json"

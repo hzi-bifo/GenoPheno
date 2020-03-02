@@ -16,9 +16,13 @@ class PhenotypeTable(object):
         self.instances = self.phenotype_table[self.phenotype_table.columns.tolist()[0]].tolist()[1::]
         self.matrix = self.phenotype_table[self.phenotypes]
 
+
         # phenotype dictionary preparation
         self.phenotype_dict = dict()
         for phenotype in self.phenotypes:
+            # in case of having no title for the isolates
+            if len(self.phenotype_table[phenotype].tolist()) != len(self.instances):
+                self.instances = self.phenotype_table[self.phenotype_table.columns.tolist()[0]].tolist()[0::]
             self.phenotype_dict[phenotype] = pd.Series(self.phenotype_table[phenotype].tolist(), index=self.instances).to_dict()
 
         # TODO: add phenotype vector for tree visualization

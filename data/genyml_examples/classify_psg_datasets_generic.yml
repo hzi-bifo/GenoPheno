@@ -1,0 +1,34 @@
+metadata:
+  project: "%(DRUG)%"
+  phylogenetic_tree: "%(PROJDIR)%/common/tree.txt"
+  phenotype_table: "%(PROJDIR)%/%(DRUG)%/labels.csv"
+  output_directory: "%(OUTDIR)%/%(DRUG)%/"
+  number_of_cores: 40
+
+genotype_tables:
+  tables:
+    - table: 'genexpgpa'
+      path: "%(PROJDIR)%/%(DRUG)%/%(drug_full)%_gpaexpr.csv"
+      preprocessing: none
+      datatype: numerical
+
+predictions:
+  - prediction: "%(DRUG)% Resistance Prediction"
+    label_mapping:
+      1: 1
+      0: 0
+    optimized_for: "f1_macro"
+    reporting: ['accuracy', 'f1_pos', 'f1_macro']
+    features:
+      - feature: "genexpgpa"
+        list: ['genexpgpa']
+        predefined_cv:
+          name: predefined
+          train: "%(PROJDIR)%/%(DRUG)%/%(drug_full)%_S-vs-R_folds.txt"
+          test: "%(PROJDIR)%/%(DRUG)%/test_iso.txt"
+          inner_cv: 10
+    classifiers:
+      lsvm:
+        param_config: "%(config)%/scikit_models/svm/linear_svm_config.json"
+      svm:
+        param_config: "%(config)%/scikit_models/svm/svm_config.json"
