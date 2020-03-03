@@ -255,15 +255,12 @@ class Geno2PhenoPipeline(object):
                         train_path = predefined_cv['train']
                         inner_cv = predefined_cv['inner_cv']
 
-                        print('here1')
                         if FileUtility.exists(train_path):
                             k_fold = len(FileUtility.load_list(train_path))
-                            print('here2')
                         else:
                             self.logger.error("the predefined fold does not exist")
                             exit()
 
-                        print('here3')
                         current_cv = F"{cv_name}"
                         self.kfold_settings[current_cv] = TreeBasedKFold(k_fold)
 
