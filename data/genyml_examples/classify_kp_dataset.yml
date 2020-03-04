@@ -27,26 +27,6 @@ predictions:
     optimized_for: "f1_pos"
     reporting: ['f1_pos']
     features:
-#      - feature: "k-mer"
-#        list: ['6mer']
-#        validation_tuning:
-#          name: "kmer_cv"
-#          train:
-#            method: "treebased"
-#            folds: 10
-#          test:
-#            method: "treebased"
-#            ratio: 0.1
-#          inner_cv: 10
-#      - feature: "gpa"
-#        list: ["gpa"]
-#        use_validation_tuning: "kmer_cv"
-#      - feature: "snps"
-#        list: ["snps"]
-#        use_validation_tuning: "kmer_cv"
-#      - feature: "snps_gpa"
-#        list: ["snps", "gpa"]
-#        use_validation_tuning: "kmer_cv"
       - feature: "all_features"
         list: ["snps", "gpa","6mer"]
         validation_tuning:
@@ -58,6 +38,18 @@ predictions:
             method: "treebased"
             ratio: 0.1
           inner_cv: 10
+      - feature: "gpa"
+        list: ["gpa"]
+        use_validation_tuning: "tree_based"
+      - feature: "snps"
+        list: ["snps"]
+        use_validation_tuning: "tree_based"
+      - feature: "snps_gpa"
+        list: ["snps", "gpa"]
+        use_validation_tuning: "tree_based"
+      - feature: "k-mer"
+        list: ['6mer']
+        use_validation_tuning: "tree_based"
     label_mapping:
       "Human_infection": 1
       "Human_invasive": 1
