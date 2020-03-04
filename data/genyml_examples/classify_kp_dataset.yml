@@ -9,12 +9,12 @@ genotype_tables:
     - table: 'gpa'
       path: "%(PROJDIR)%/K_pneumoniae/genotables/gpa.uniq.mat"
       preprocessing: none
-      datatype: text
+      datatype: numerical
 
     - table: 'snps'
       path: "%(PROJDIR)%/K_pneumoniae/genotables/non-syn_SNPs.uniq.mat"
       preprocessing: none
-      datatype: text
+      datatype: numerical
 
     - sequence: '6mer'
       path: "%(PROJDIR)%/K_pneumoniae/assemblies_renamed/"

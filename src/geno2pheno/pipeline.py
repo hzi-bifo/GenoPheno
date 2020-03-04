@@ -136,7 +136,7 @@ class Geno2PhenoPipeline(object):
 
         for table in tqdm.tqdm(self.pipeline['genotype_tables']['tables']):
 
-            delimeter = None
+            delimiter = None
 
             if 'table' not in table:
                 if 'sequence' in table:
@@ -167,7 +167,7 @@ class Geno2PhenoPipeline(object):
                 else:
                     datatype = data_type_map[table['datatype']]
 
-                GenotypeVectorizer.create_genotype_table(F"{self.output_directory}intermediate_representations/", table['path'], table['table'], delimeter=table['delimeter'] if 'delimeter' in table else None, preprocessing=preprocessing, datatype=datatype, logger=self.logger, overwrite=self.overwrite)
+                GenotypeVectorizer.create_genotype_table(F"{self.output_directory}intermediate_representations/", table['path'], table['table'], delimiter=table['delimiter'] if 'delimiter' in table else None, preprocessing=preprocessing, datatype=datatype, logger=self.logger, overwrite=self.overwrite)
 
     def run_prediction_block(self):
         self.logger.info('begin parsing the prediction block')

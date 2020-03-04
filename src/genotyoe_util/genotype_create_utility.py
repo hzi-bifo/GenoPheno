@@ -45,15 +45,15 @@ class GenotypeVectorizer(object):
 
     @staticmethod
     def create_genotype_table(save_path, load_path, feature_title='_', datatype=DataType.TEXT,
-                              preprocessing=Preprocessing.NONE, delimeter=None, overwrite=False, logger=None):
+                              preprocessing=Preprocessing.NONE, delimiter=None, overwrite=False, logger=None):
 
         if overwrite or (not os.path.exists(F"{save_path}{feature_title}_feature_data.npz") or not os.path.exists(
                 F"{save_path}{feature_title}_feature_name.txt") or not os.path.exists(
                 F"{save_path}{feature_title}_instances.txt")):
 
             if datatype == DataType.TEXT:
-                feature_lines = [' '.join(l.split()[1::]) if not delimeter else ' '.join(l.split(delimeter)[1::]) for l in FileUtility.load_list(load_path)]
-                instances = [l.split()[0] if not delimeter else l.split(delimeter)[0] for l in FileUtility.load_list(load_path)]
+                feature_lines = [' '.join(l.split()[1::]) if not delimiter else ' '.join(l.split(delimiter)[1::]) for l in FileUtility.load_list(load_path)]
+                instances = [l.split()[0] if not delimiter else l.split(delimiter)[0] for l in FileUtility.load_list(load_path)]
 
                 vectorizer = TfidfVectorizer(use_idf=False, analyzer='word', ngram_range=(1, 1),
                                              norm='l1' if preprocessing == Preprocessing.L1 else 'l2' if preprocessing == Preprocessing.L2 else None,
@@ -66,7 +66,7 @@ class GenotypeVectorizer(object):
 
             if datatype == DataType.NUMERICAL:
 
-                df = pd.read_table(load_path, delimiter='\t' if not delimeter else delimeter)
+                df = pd.read_table(load_path, delimiter='\s+' if not delimiter else delimiter)
                 feature_names = df.columns.tolist()[1::]
                 instances = df[df.columns.tolist()[0]].tolist()
                 matrix_representation = sparse.csr_matrix(df[feature_names].values)

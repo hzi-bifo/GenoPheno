@@ -16,11 +16,6 @@ class PhenotypeTable(object):
         self.instances = self.phenotype_table[self.phenotype_table.columns.tolist()[0]].tolist()[1::]
         self.matrix = self.phenotype_table[self.phenotypes]
 
-        print('self.phenotype_table',self.phenotype_table)
-        print('self.phenotypes', self.phenotypes)
-        print('self.instances', self.instances)
-        print('self.matrix', self.matrix.shape)
-
         # phenotype dictionary preparation
         self.phenotype_dict = dict()
         for phenotype in self.phenotypes:
