@@ -188,18 +188,23 @@ class Geno2PhenoPipeline(object):
             # classifiers
             classifiers = prediction['classifiers']
 
-            print(prediction)
             for feature in prediction['features']:
-                print('hereee')
 
                 feature_list = feature['list']
                 feature_title =  feature['feature']
 
+                print(1,feature)
+
                 if feature_title not in self.requested_results[prediction['prediction']]:
                     self.requested_results[prediction['prediction']][feature_title] = dict()
 
+                print(2, feature)
+
+
                 for phenotype, (X, Y, feature_names, instances) in Genotype_data_load.load_aggregated_data(self.output_directory, feature_list, self.phenotype_table, mapping=label_mapping, logger = self.logger):
                     self.logger.info(F" ** begin with phenotype {phenotype} prediction of {prediction['prediction']}")
+
+                    print(3,feature)
 
                     if phenotype not in self.requested_results[prediction['prediction']][feature_title]:
                         self.requested_results[prediction['prediction']][feature_title][phenotype] = dict()
