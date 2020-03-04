@@ -188,7 +188,9 @@ class Geno2PhenoPipeline(object):
             # classifiers
             classifiers = prediction['classifiers']
 
+            print('prediction')
             for feature in prediction['features']:
+                print('hereee')
 
                 feature_list = feature['list']
                 feature_title =  feature['feature']
