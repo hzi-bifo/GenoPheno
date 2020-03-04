@@ -67,9 +67,16 @@ class GenotypeVectorizer(object):
             if datatype == DataType.NUMERICAL:
 
                 df = pd.read_table(load_path, delimiter='\s+' if not delimiter else delimiter)
-                feature_names = df.columns.tolist()[1::]
-                instances = df[df.columns.tolist()[0]].tolist()
+
+                feature_names = df.columns.tolist()
+                instances = df.index.tolist()
                 matrix_representation = sparse.csr_matrix(df[feature_names].values)
+
+                # TODO: Needs to be fixed
+                if not matrix_representation.shape[0]==len(set(instances)):
+                    feature_names = df.columns.tolist()[1::]
+                    instances = df[df.columns.tolist()[0]].tolist()
+                    matrix_representation = sparse.csr_matrix(df[feature_names].values)
 
                 if preprocessing == Preprocessing.BINARY:
                     matrix_representation = np.round(MaxAbsScaler().fit_transform(matrix_representation))
