@@ -202,7 +202,9 @@ class Geno2PhenoPipeline(object):
                     if phenotype not in self.requested_results[prediction['prediction']][feature_title]:
                         self.requested_results[prediction['prediction']][feature_title][phenotype] = dict()
 
+                    print(feature)
                     if 'validation_tuning' in feature:
+                        print('here')
                         # read the tune/eval setting
                         validation_tuning_setting = feature['validation_tuning']
                         cv_name = validation_tuning_setting['name']
