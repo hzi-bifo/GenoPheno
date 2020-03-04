@@ -1,7 +1,7 @@
 metadata:
   project: kpneumoniae_project
   phylogenetic_tree: "%(PROJDIR)%/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"
-  phenotype_table: "%(OUTDIR)%/metadata/phenotype_list_v2.txt"
+  phenotype_table: "%(OUTDIR)%/phenotype_list"
   output_directory: "%(OUTDIR)%/KP_results/"
 
 genotype_tables:
