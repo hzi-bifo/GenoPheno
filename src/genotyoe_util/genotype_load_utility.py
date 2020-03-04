@@ -36,9 +36,6 @@ class Genotype_data_load(object):
             if logger:
                 logger.debug(F"the shape of {feature} is {X_dict[feature].shape}")
 
-        print(instance_dict)
-        print(phenotype_table.phenotype_dict.items())
-
         for phenotype, instance_to_label in phenotype_table.phenotype_dict.items():
 
             if logger:
