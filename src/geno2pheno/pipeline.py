@@ -190,6 +190,7 @@ class Geno2PhenoPipeline(object):
 
             for feature in prediction['features']:
 
+                self.logger.info(F" * loading feature {feature['feature']}")
                 feature_list = feature['list']
                 feature_title =  feature['feature']
 
@@ -197,8 +198,10 @@ class Geno2PhenoPipeline(object):
                 if feature_title not in self.requested_results[prediction['prediction']]:
                     self.requested_results[prediction['prediction']][feature_title] = dict()
 
-
+                self.logger.info(F" * injaaam")
                 for phenotype, (X, Y, feature_names, instances) in Genotype_data_load.load_aggregated_data(self.output_directory, feature_list, self.phenotype_table, mapping=label_mapping, logger = self.logger):
+
+                    self.logger.info(F" * now injaaam")
                     self.logger.info(F" ** begin with phenotype {phenotype} prediction of {prediction['prediction']}")
 
                     if phenotype not in self.requested_results[prediction['prediction']][feature_title]:
@@ -209,6 +212,7 @@ class Geno2PhenoPipeline(object):
                         validation_tuning_setting = feature['validation_tuning']
                         cv_name = validation_tuning_setting['name']
                         current_cv = F"{validation_tuning_setting['name']}>{phenotype}"
+
                         self.kfold_settings[current_cv] = TreeBasedKFold(validation_tuning_setting['train']['folds'])
                         try:
                             test_ratio = validation_tuning_setting['test']['ratio'] if 'test' in validation_tuning_setting else 0
