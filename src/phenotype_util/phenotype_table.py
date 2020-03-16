@@ -11,7 +11,7 @@ class PhenotypeTable(object):
 
     def __init__(self, path, save_path=None, overwrite=True,  logger=None):
 
-        self.phenotype_table = pd.read_table(path, delimiter='\s+')
+        self.phenotype_table = pd.read_table(path, delimiter='\s+',index_col=0)
         self.phenotypes = self.phenotype_table.columns.tolist()[1::]
         self.instances = self.phenotype_table[self.phenotype_table.columns.tolist()[0]].tolist()[1::]
         self.matrix = self.phenotype_table[self.phenotypes]
