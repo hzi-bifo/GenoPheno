@@ -66,13 +66,10 @@ class GenotypeVectorizer(object):
 
             if datatype == DataType.NUMERICAL:
 
-                df = pd.read_table(load_path, delimiter='\s+' if not delimiter else delimiter)
+                df = pd.read_table(load_path, delimiter='\s+' if not delimiter else delimiter, index_col=0)
 
                 feature_names = df.columns.tolist()
                 instances = df.index.tolist()
-                print(load_path)
-                print(len(feature_names))
-                print(df[feature_names].values.shape)
                 matrix_representation = sparse.csr_matrix(df[feature_names].values)
 
                 # TODO: Needs to be fixed
