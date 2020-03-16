@@ -70,7 +70,7 @@ class GenotypeVectorizer(object):
 
                 feature_names = df.columns.tolist()
                 instances = df.index.tolist()
-                print(feature_names)
+                print(load_path)
                 print(len(feature_names))
                 print(df[feature_names].values.shape)
                 matrix_representation = sparse.csr_matrix(df[feature_names].values)
