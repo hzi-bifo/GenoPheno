@@ -40,11 +40,6 @@ class SVM:
     def tune_and_eval(self, save_path, inner_cv_number_of_folds, outer_cv , optimizing_score='f1_macro', n_jobs=4, overwrite=True,
                   logger=None):
 
-        np.save('X',self.X.toarray())
-        np.save('Y.txt', self.Y)
-        ## TODO
-        FileUtility.save_list('features.txt', self.feature_names)
-        FileUtility.save_list('instances.txt', self.instances)
         tune_eval = TuneEvalSteps(self.X, self.Y, self.instances, outer_cv, inner_cv_number_of_folds)
         best_estimator = tune_eval.run(save_path, self.model, self.params_to_tune, optimizing_score=optimizing_score, n_jobs=n_jobs, overwrite=overwrite,
                       logger=logger)
