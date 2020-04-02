@@ -57,5 +57,7 @@ predictions:
     classifiers:
       svm:
           param_config: "%(config)%/scikit_models/svm/svm_config.json"
-      lsvm:
-          param_config: "%(config)%/scikit_models/svm/linear_svm_config.json"
+      rf:
+          param_config: "%(config)%/scikit_models/rf/rf_config.json"
+      lr:
+          param_config: "%(config)%/scikit_models/lr/lr_config.json"
