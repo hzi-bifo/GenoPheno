@@ -319,7 +319,7 @@ class Geno2PhenoPipeline(object):
                         if classifier == 'lr':
                             if self.overwrite or not FileUtility.exists(
                                     F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
-                                model = LogisticRegression(X, Y, instances, feature_names=feature_names, lr_param_config_file=config['param_config'], logger=self.logger, linear=True)
+                                model = LogisticRegressionClassifier(X, Y, instances, feature_names=feature_names, lr_param_config_file=config['param_config'], logger=self.logger, linear=True)
                                 model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
 
                         if classifier == 'svm':

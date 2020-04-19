@@ -122,7 +122,7 @@ class RandomForest:
         f.close()
 
 
-class LogisticRegression:
+class LogisticRegressionClassifier:
     '''
         Logistic Regression classifier
     '''
