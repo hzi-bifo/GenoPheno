@@ -1,55 +1,28 @@
 metadata:
   project: kpneumoniae_project
-  phylogenetic_tree: "%(PROJDIR)%/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"
-  phenotype_table: "%(OUTDIR)%/phenotype_list"
-  output_directory: "%(OUTDIR)%/KP_results/"
+  phylogenetic_tree: "/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"
+  phenotype_table: "/net/sgi/metagenomics/nobackup/prot/projects/verify_genopheno/kp_res/phenotype_list"
+  output_directory: "%(OUTDIR)%/KP_test_1/"
 
 genotype_tables:
   tables:
-    - table: 'gpa'
-      path: "%(PROJDIR)%/K_pneumoniae/genotables/gpa.uniq.mat"
-      preprocessing: none
-      datatype: numerical
-
     - table: 'snps'
       path: "%(PROJDIR)%/K_pneumoniae/genotables/non-syn_SNPs.uniq.mat"
       preprocessing: none
       datatype: numerical
-
-    - sequence: '6mer'
-      path: "%(PROJDIR)%/K_pneumoniae/assemblies_renamed/"
-      preprocessing: l1
-      k_value: 6
-
 
 predictions:
   - prediction: "huminf_pred"
     optimized_for: "f1_pos"
     reporting: ['f1_pos']
     features:
-      - feature: "all_features"
-        list: ["snps", "gpa","6mer"]
-        validation_tuning:
-          name: "tree_based"
-          train:
-            method: "treebased"
-            folds: 10
-          test:
-            method: "treebased"
-            ratio: 0.1
-          inner_cv: 10
-      - feature: "gpa"
-        list: ["gpa"]
-        use_validation_tuning: "tree_based"
       - feature: "snps"
         list: ["snps"]
-        use_validation_tuning: "tree_based"
-      - feature: "snps_gpa"
-        list: ["snps", "gpa"]
-        use_validation_tuning: "tree_based"
-      - feature: "k-mer"
-        list: ['6mer']
-        use_validation_tuning: "tree_based"
+        predefined_cv:
+          name: "tree_based"
+          train: "/net/sgi/metagenomics/nobackup/prot/projects/verify_genopheno/kp_comprehensive_old/KP_results/classification/cv/huminf_pred/tree_based/all_features_phenotype/cv_folds.txt"
+          test: "/net/sgi/metagenomics/nobackup/prot/projects/verify_genopheno/kp_comprehensive_old/KP_results/classification/cv/huminf_pred/tree_based/all_features_phenotype/cv_folds.txt"
+          inner_cv: 10
     label_mapping:
       "Human_infection": 1
       "Human_invasive": 1
@@ -57,7 +30,3 @@ predictions:
     classifiers:
       svm:
           param_config: "%(config)%/scikit_models/svm/svm_config.json"
-      rf:
-          param_config: "%(config)%/scikit_models/rf/rf_config.json"
-      lr:
-          param_config: "%(config)%/scikit_models/lr/lr_config.json"

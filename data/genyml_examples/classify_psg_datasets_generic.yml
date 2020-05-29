@@ -6,20 +6,10 @@ metadata:
 
 genotype_tables:
   tables:
-    - table: 'genexpgpa'
-      path: "%(PROJDIR)%/%(DRUG)%/%(drug_full)%_gpaexpr.csv"
-      preprocessing: none
-      datatype: numerical
-
     - table: 'snps'
-      path: "%(PROJDIR)%/common/snps.txt"
+      path: "/net/sgi/metagenomics/projects/pseudo_genomics/results/seq2geno_testing/Pseudomonas_SNPusingBWA/nonsyn_SNPs_final.bin.mat_NONRDNT"
       preprocessing: none
       datatype: numerical
-
-    - sequence: '6mer'
-      path: "/net/sgi/metagenomics/projects/pseudo_genomics/forRuben/genomes/"
-      preprocessing: l1
-      k_value: 6
 
 predictions:
   - prediction: "%(DRUG)% Resistance Prediction"
@@ -29,31 +19,13 @@ predictions:
     optimized_for: "f1_macro"
     reporting: ['accuracy', 'f1_pos', 'f1_macro']
     features:
-      - feature: "all_features"
-        list: ["snps", "genexpgpa","6mer"]
-        validation_tuning:
-          name: "tree_based"
-          train:
-            method: "treebased"
-            folds: 10
-          test:
-            method: "treebased"
-            ratio: 0.1
-          inner_cv: 10
-      - feature: "genexpgpa"
-        list: ["genexpgpa"]
-        use_validation_tuning: "tree_based"
       - feature: "snps"
         list: ["snps"]
-        use_validation_tuning: "tree_based"
-      - feature: "snps_genexpgpa"
-        list: ["snps", "genexpgpa"]
-        use_validation_tuning: "tree_based"
-      - feature: "k-mer"
-        list: ['6mer']
-        use_validation_tuning: "tree_based"
+        predefined_cv:
+          name: "tree_based"
+          train: "/net/sgi/metagenomics/nobackup/prot/projects/verify_genopheno/results_newtree/MER/classification/cv/MER Resistance Prediction/tree_based/all_features_Meropenem_S-vs-R/cv_folds.txt"
+          test: "/net/sgi/metagenomics/nobackup/prot/projects/verify_genopheno/results_newtree/MER/classification/cv/MER Resistance Prediction/tree_based/all_features_Meropenem_S-vs-R/test_fold.txt"
+          inner_cv: 10
     classifiers:
       lsvm:
         param_config: "%(config)%/scikit_models/svm/linear_svm_config.json"
-      svm:
-        param_config: "%(config)%/scikit_models/svm/svm_config.json"
