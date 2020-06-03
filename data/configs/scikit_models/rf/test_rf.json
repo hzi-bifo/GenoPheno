@@ -1,0 +1,10 @@
+[
+  {
+    "n_estimators": [100],
+    "criterion": ["entropy"],
+    "max_features": ["auto"],
+    "min_samples_split": [10],
+    "min_samples_leaf": [1],
+    "class_weight": [null]
+  }
+]

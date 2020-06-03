@@ -1,0 +1,48 @@
+metadata:
+  project: test_package
+  phylogenetic_tree: "%(PROJDIR)%/phylogentictree.txt"
+  phenotype_table: "%(PROJDIR)%/phenotypes.txt"
+  output_directory: "%(OUTDIR)%/test_results/"
+  number_of_cores: 40
+
+genotype_tables:
+  tables:
+    - table: 'genexp'
+      path: "%(PROJDIR)%/genexp.csv"
+      preprocessing: none
+      datatype: numerical
+    - table: 'gpa'
+      path: "%(PROJDIR)%/genotype_table.txt"
+      preprocessing: binary
+      datatype: text
+    - sequence: '6mer'
+      path: "%(PROJDIR)%/sequences/"
+      preprocessing: l1
+      k_value: 6
+
+predictions:
+  - prediction: "amr_pred"
+    label_mapping:
+      1: 1
+      0: 0
+    optimized_for: "f1_macro"
+    reporting: ['accuracy', 'f1_pos', 'f1_macro']
+    features:
+      - feature: "GenExp"
+        list: ['genexp']
+        predefined_cv:
+          name: "tree_based"
+          train: "/net/sgi/metagenomics/nobackup/prot/projects/verify_genopheno/results_newtree/MER/classification/cv/MER Resistance Prediction/tree_based/all_features_Meropenem_S-vs-R/cv_folds.txt"
+          test: "/net/sgi/metagenomics/nobackup/prot/projects/verify_genopheno/results_newtree/MER/classification/cv/MER Resistance Prediction/tree_based/all_features_Meropenem_S-vs-R/test_fold.txt"
+          inner_cv: 10
+      - feature: "K-mer"
+        list: ["6mer"]
+        use_validation_tuning: "cv_tree"
+      - feature: "GPA"
+        list: ["gpa"]
+        use_validation_tuning: "cv_tree"
+    classifiers:
+      lsvm:
+        param_config: "%(config)%/scikit_models/svm/test_cvs.json"
+      svm:
+        param_config: "%(config)%/scikit_models/svm/test_svm.json"
