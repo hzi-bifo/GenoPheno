@@ -3,9 +3,8 @@
     "C": [
       0.015
     ],
-    "class_weight": ["balanced"],
-    "tol": [1e-06],
-    "dual": [false],
+     "class_weight": ["balanced"],
+     "tol": [1e-06],
      "fit_intercept": [true],
      "intercept_scaling": [1],
      "loss": ["squared_hinge"],
