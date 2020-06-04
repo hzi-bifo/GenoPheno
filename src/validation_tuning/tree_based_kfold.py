@@ -174,9 +174,12 @@ class TreeBasedKFold(_BaseKFold):
                     folds_list = TreeBasedKFold.chunk_for_cv(sorted_instance_idx, temp_n_split_for_test)
                     location_of_instance_in_tree_line.sort()
                     sort_locs = TreeBasedKFold.chunk_for_cv(location_of_instance_in_tree_line, temp_n_split_for_test)
-                    idx_best_isolated_fold = np.argmin(
-                        [np.abs(self.tree_newick[x[0]:x[-1]].count('(') - self.tree_newick[x[0]:x[-1]].count(')')) for x in
-                         sort_locs])
+                    try:
+                        idx_best_isolated_fold = np.argmin(
+                            [np.abs(self.tree_newick[x[0]:x[-1]].count('(') - self.tree_newick[x[0]:x[-1]].count(')')) for x in
+                             sort_locs])
+                    except:
+                        idx_best_isolated_fold=0   
                     modified_tree = self.tree_newick.replace(
                         self.tree_newick[sort_locs[idx_best_isolated_fold][0]:sort_locs[idx_best_isolated_fold][-1]], '')
 
