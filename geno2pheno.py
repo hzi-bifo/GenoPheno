@@ -40,7 +40,6 @@ if __name__ == '__main__':
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         fxn()
-    warnings.filterwarnings('always')
     err = checkArgs(sys.argv)
     if err:
         print(err)

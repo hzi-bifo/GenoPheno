@@ -13,6 +13,7 @@ from src.utility.list_set_util import argsort
 from src.validation_tuning.tune_eval import *
 import math
 import operator
+import warnings
 
 class SVM:
     '''
@@ -44,6 +45,7 @@ class SVM:
     def tune_and_eval(self, save_path, inner_cv_number_of_folds, outer_cv , optimizing_score='f1_macro', n_jobs=4, overwrite=True,
                   logger=None):
 
+        warnings.filterwarnings('always')
         tune_eval = TuneEvalSteps(self.X, self.Y, self.instances, outer_cv, inner_cv_number_of_folds)
         best_estimator = tune_eval.run(save_path, self.model, self.params_to_tune, optimizing_score=optimizing_score, n_jobs=n_jobs, overwrite=overwrite,
                       logger=logger)
@@ -93,7 +95,7 @@ class RandomForest:
 
     def tune_and_eval(self, save_path, inner_cv_number_of_folds, outer_cv , optimizing_score='f1_macro', n_jobs=4, overwrite=True,
                   logger=None):
-
+        warnings.filterwarnings('always')
         tune_eval = TuneEvalSteps(self.X, self.Y, self.instances, outer_cv, inner_cv_number_of_folds)
         best_estimator = tune_eval.run(save_path, self.model, self.params_to_tune, optimizing_score=optimizing_score, n_jobs=n_jobs, overwrite=overwrite,
                       logger=logger)
@@ -146,7 +148,7 @@ class LogisticRegressionClassifier:
 
     def tune_and_eval(self, save_path, inner_cv_number_of_folds, outer_cv , optimizing_score='f1_macro', n_jobs=4, overwrite=True,
                   logger=None):
-
+        warnings.filterwarnings('always')
         tune_eval = TuneEvalSteps(self.X, self.Y, self.instances, outer_cv, inner_cv_number_of_folds)
         best_estimator = tune_eval.run(save_path, self.model, self.params_to_tune, optimizing_score=optimizing_score, n_jobs=n_jobs, overwrite=overwrite,
                       logger=logger)
