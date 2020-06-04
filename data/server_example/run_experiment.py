@@ -2,6 +2,7 @@ import os
 GENO2PHENO_DIR = os.path.dirname(__file__) + "/../../"
 import sys
 sys.path.append(GENO2PHENO_DIR)
+sys.path.append(GENO2PHENO_DIR+'/src')
 from src.geno2pheno.pipeline import Geno2PhenoPipeline
 
 DATA_DIR = os.path.dirname(__file__) + "/../../data"
