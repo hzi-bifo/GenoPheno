@@ -32,8 +32,8 @@ predictions:
         list: ['genexp']
         predefined_cv:
           name: "tree_based"
-          train: "/net/sgi/metagenomics/nobackup/prot/projects/verify_genopheno/results_newtree/MER/classification/cv/MER Resistance Prediction/tree_based/all_features_Meropenem_S-vs-R/cv_folds.txt"
-          test: "/net/sgi/metagenomics/nobackup/prot/projects/verify_genopheno/results_newtree/MER/classification/cv/MER Resistance Prediction/tree_based/all_features_Meropenem_S-vs-R/test_fold.txt"
+          train:  "%(PROJDIR)%/predefined_cv/cv_folds.txt"
+          test: "%(PROJDIR)%/predefined_cv/test_fold.txt"
           inner_cv: 10
       - feature: "K-mer"
         list: ["6mer"]
