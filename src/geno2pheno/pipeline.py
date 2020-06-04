@@ -198,10 +198,8 @@ class Geno2PhenoPipeline(object):
                 if feature_title not in self.requested_results[prediction['prediction']]:
                     self.requested_results[prediction['prediction']][feature_title] = dict()
 
-                self.logger.info(F" * injaaam")
                 for phenotype, (X, Y, feature_names, instances) in Genotype_data_load.load_aggregated_data(self.output_directory, feature_list, self.phenotype_table, mapping=label_mapping, logger = self.logger):
 
-                    self.logger.info(F" * now injaaam")
                     self.logger.info(F" ** begin with phenotype {phenotype} prediction of {prediction['prediction']}")
 
                     if phenotype not in self.requested_results[prediction['prediction']][feature_title]:

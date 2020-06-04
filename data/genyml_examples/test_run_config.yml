@@ -2,7 +2,7 @@ metadata:
   project: test_package
   phylogenetic_tree: "%(PROJDIR)%/phylogentictree.txt"
   phenotype_table: "%(PROJDIR)%/phenotypes.txt"
-  output_directory: "%(OUTDIR)%/test_results/"
+  output_directory: "%(OUTDIR)%/"
   number_of_cores: 40
 
 genotype_tables:
@@ -10,6 +10,7 @@ genotype_tables:
     - table: 'genexp'
       path: "%(PROJDIR)%/genexp.csv"
       preprocessing: none
+      delimiter: ","
       datatype: numerical
     - table: 'gpa'
       path: "%(PROJDIR)%/genotype_table.txt"
