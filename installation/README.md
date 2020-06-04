@@ -46,6 +46,8 @@ The next step would be installation of the dependencies:
 ### Linux
 ```
 conda create --name genopheno --file installations/requirements_linux.yaml
+pip install joblib
+export QT_QPA_PLATFORM='offscreen'
 ```
 
 ### MacOS
@@ -77,4 +79,13 @@ The test config exist at:
 
 ```
 data/genyml_examples/test_run_config.yml
+```
+
+
+## (5) Server setting example
+
+For a quick test you may run the following command, "data/server_example/toy_data_in" is the content of the zip file uploaded on the server.
+
+```
+python data/server_example/run_experiment.py
 ```
