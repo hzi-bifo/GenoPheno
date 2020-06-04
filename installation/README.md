@@ -47,6 +47,7 @@ The next step would be installation of the dependencies:
 ```
 conda create --name genopheno --file installations/requirements_linux.yaml
 pip install joblib
+pip install xlwt
 export QT_QPA_PLATFORM='offscreen'
 ```
 

@@ -8,7 +8,7 @@ from src.geno2pheno.pipeline import Geno2PhenoPipeline
 DATA_DIR = os.path.dirname(__file__) + "/../../data"
 
 def run_test(path_to_in_dir, path_to_out_dir, cores=30):
-    geno2pheno = Geno2PhenoPipeline(F"{path_to_in_dir}/config.yml", overwrite=True, cores=cores,
+    geno2pheno = Geno2PhenoPipeline(F"{path_to_in_dir}/config.yml", overwrite=False, cores=cores,
                                     replace_list=[('%(config)%', f"{DATA_DIR}/configs/"),('%(PROJDIR)%',f"{path_to_in_dir}"),
                                                   ('%(OUTDIR)%', f"{path_to_out_dir}")
                                                   ])
