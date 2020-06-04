@@ -5,11 +5,13 @@ metadata:
   output_directory: "%(OUTDIR)%/test_results/"
   number_of_cores: 40
 
+
 genotype_tables:
   tables:
     - table: 'genexp'
       path: "%(PROJDIR)%/genexp.csv"
       preprocessing: none
+      delimiter: ","
       datatype: numerical
     - table: 'gpa'
       path: "%(PROJDIR)%/genotype_table.txt"
