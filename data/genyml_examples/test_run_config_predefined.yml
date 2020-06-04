@@ -1,5 +1,5 @@
 metadata:
-  project: test_package
+  project: test_package_with_predefined_CV
   phylogenetic_tree: "%(PROJDIR)%/phylogentictree.txt"
   phenotype_table: "%(PROJDIR)%/phenotypes.txt"
   output_directory: "%(OUTDIR)%/test_results/"
