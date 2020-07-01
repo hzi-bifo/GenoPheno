@@ -1,0 +1,24 @@
+name: genopheno
+channels:
+  - conda-forge
+  - bioconda
+  - plotly
+dependencies:
+  - pandas
+  - pip
+  - python=3.6.7
+  - tqdm
+  - scipy
+  - scikit-learn
+  - biopython
+  - yaml
+  - pyyaml
+  - matplotlib
+  - ete3
+  - qt
+  - pyqt
+  - plotly
+  - requests
+  - plotly-orca=1.2.1
+  - nodejs
+  - nomkl
