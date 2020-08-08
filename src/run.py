@@ -26,6 +26,8 @@ def prepare(zip):
 
 def generate(html_file, html_dir):
 
+    os.mkdir(html_dir)
+
     zipDir = '/tmp/unpack/output/reports/classification'
     zipFile = html_dir + '/genopheno_output.zip'
     htmlFile = open(html_file, "w+")
@@ -42,8 +44,9 @@ def generate(html_file, html_dir):
     for root, dirs, files in os.walk(zipDir):
         for file in files:
             if re.match(includes, file):
+                shutil.copy(file, html_dir)
                 zipf.write(file)
-                pages = convert_from_path(zipDir+'/'+file, 500)
+                pages = convert_from_path(zipDir+'/'+file, size=(1100, None))
                 for page in pages:
                     page.save(html_dir+'/'+file+'.png', 'PNG')
                     htmlFile.write(file+'.png\n')
