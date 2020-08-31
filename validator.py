@@ -290,3 +290,7 @@ class ValidateGenML(object):
         zipObj.write(self.tree_path, 'tree.csv')                              
         zipObj.close()                              
 
+
+                              
+val = ValidateGenML('config.yaml')
+val.create_zip_file('project')                              
