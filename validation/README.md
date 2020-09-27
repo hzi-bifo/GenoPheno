@@ -36,30 +36,31 @@ The config of GenoPheno has three main parts: (1) metadata, (2) genotype tables,
 
 In this part the metadata of the project are provided, which are the followings:
 
-  `project`: \<string\> the project name <br/>
-  `phylogenetic_tree`: \<string\> the path to the phylogenetic tree<br/>
-  `phenotype_table`: \<string\> the path to the phenotype table in tabular format,please see the example files)<br/>
+```
+  `project`: MyProject            --------> <string> the project name
+  `phylogenetic_tree`: tree.txt   --------> <string> the path to the phylogenetic tree
+  `phenotype_table`: phentype.csv --------> <string> the path to the phenotype table in tabular format,please see the example files)
 
   NOTE:
-  ```
+  ==================================================================
   Please note that the phenotype table can contain multiple schemes for the phenotype.
   The first column is the name of instances, the headers are the phenotypes, and the labels can be any string
 
   To learn more please see the example:
   validation/data/phenotypes.txt
+  ==================================================================
 
-  ```
 
-
-  `output_directory`: \<string\> `results/` please do not change this path.<br/>
-  `number_of_cores`: \<int\> 20<br/> the integer number of cores (<20)<br/>
+  `output_directory`: `results/` --------> <string> please do not change this path.
+  `number_of_cores`: 20          --------> <int> the integer number of cores (<20)
+```
 
 ### genotype tables
 
 In this part, the genotype tables are provided, including the tabular features and the k-mers needed to be extracted from the sequence contigs.
 
 ```
-genotype_tables:
+z:
   tables:
     - table:
           name: 'genexp'            --------> define a name for this feature
@@ -80,36 +81,38 @@ genotype_tables:
 
 ### prediction block
 
+This part contains information needed for the machine learning models and validation
+
 ```
 predictions:
-  - prediction:
-        name: "amr_pred"
-        label_mapping:
+  - prediction:              -------->  we would have a list of prediction block (maybe a user wants to perform differnt label mappings)
+        name: "amr_pred"     -------->  a name for this prediction scheme
+        label_mapping:       -------->  since the software currently support only the binary classification, in case of having mutliple phentypes all needs to be mapped to either 0 or 1 and the rest would be ignored
           1: 1
           0: 0
-        optimized_for: "f1_macro"
-        reporting: ['accuracy', 'f1_pos', 'f1_macro']
-        features:
-          - feature: "GenExp"
-            list: ['genexp']
-            validation_tuning:
-              name: "cv_tree"
-              train:
-                method: "treebased"
-                folds: 10
-              test:
-                method: "treebased"
-                ratio: 0.1
-              inner_cv: 10
+        optimized_for: "f1_macro"                     -------->  the score that the model on the validation data is optimized for. The possiblities are ['accuracy',  'auc_score_macro',  'auc_score_micro',  'f1_macro',  'f1_micro',  'f1_neg',  'f1_pos',  'p_neg',  'p_pos',  'precision_macro',  'precision_micro',  'r_neg',  'r_pos',  'recall_macro',  'recall_micro']
+        reporting: ['accuracy', 'f1_pos', 'f1_macro'] -------->  in the final report multiple scores can be reported, again from the list of ['accuracy',  'auc_score_macro',  'auc_score_micro',  'f1_macro',  'f1_micro',  'f1_neg',  'f1_pos',  'p_neg',  'p_pos',  'precision_macro',  'precision_micro',  'r_neg',  'r_pos',  'recall_macro',  'recall_micro']
+        features:                                     -------->  users can specify different feature sets by combining the names used in `genotype_tables` block.
+          - feature: "GenExpKmer"
+            list: ['genexp','6mer'] -------->  combining features
+            validation_tuning:      -------->  `validation_tuning` is a block to define the cross-validation and test scheme
+              name: "cv_tree"       -------->  a name for the cv so that it can be reused
+              train:                -------->  the cv training scheme
+                method: "treebased" -------->  the cv folds can be either selected based on tree or random, i.e., ['treebased','random']
+                folds: 10           -------->  # of folds
+              test:                 -------->  the test structure
+                method: "treebased" -------->  the selection method
+                ratio: 0.1          -------->  the ration of data for testing in the beginning
+              inner_cv: 10          -------->  number of folds for the nested CV
           - feature: "K-mer"
             list: ["6mer"]
-            use_validation_tuning: "cv_tree"
+            use_validation_tuning: "cv_tree" --------> a defined CV can be used with recalling
           - feature: "GPA"
             list: ["gpa"]
             use_validation_tuning: "cv_tree"
-        classifiers:
-          - lsvm
-          - svm
-          - lr
-          - rf
+        classifiers:   --------> possible classifiers
+          - lsvm       --------> linear SVM
+          - svm        --------> SVM
+          - lr         --------> Logistic regression
+          - rf         --------> Random forests
 ```
