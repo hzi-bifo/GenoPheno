@@ -2,7 +2,7 @@ metadata:
   project: test_package
   phylogenetic_tree: "data/phylogentictree.txt"
   phenotype_table: "data/phenotypes.txt"
-  output_directory: "/"
+  output_directory: "results/"
   number_of_cores: 20
 
 genotype_tables:

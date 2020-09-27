@@ -47,7 +47,7 @@ class ValidateGenML(object):
         self.genotype_tables = dict()
         self.sequence_dir = dict()
         self.__load_schema()
-        self.config = OrderedDict(self.__load_config(config_file))
+        self.config = self.__load_config(config_file)
         self.v = Validator()
         self.v.validate(self.config, self.schema_general)
         if self.v.errors:
@@ -361,13 +361,14 @@ class ValidateGenML(object):
 
             # config
             self.rootLogger.info('Adding the config to the zip file')
-            config = OrderedDict(eval(config_str))
+            config = eval(config_str)
             timestamp = datetime.datetime.now()
             unix_time = str(time.mktime(timestamp.timetuple()))
             md5_digest = str(hashlib.md5((unix_time).encode('utf-8')).hexdigest())
 
+
             with open(md5_digest, 'w') as yaml_file:
-                yaml.dump(config, yaml_file, default_flow_style=False)
+                yaml.dump(config, yaml_file, default_flow_style=False,explicit_start=False,version=False,sort_keys=True)
             zipObj.write(md5_digest, 'config.yml')
             os.remove(md5_digest)
 
