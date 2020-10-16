@@ -41,6 +41,8 @@ class Genotype_data_load(object):
             if logger:
                 logger.debug(F"start aggregation for phenotype {phenotype}")
 
+
+
             instance_final = get_intersection_of_list(list(instance_dict.values())+[list(instance_to_label.keys())])
             instance_final.sort()
 
@@ -56,9 +58,14 @@ class Genotype_data_load(object):
                 X_final.append(mat[idx_common_instances_in_mat,:].toarray())
                 feature_names_final = feature_names_final + feature_names_dict[feature_title]
 
+
             X_final = np.concatenate(tuple(X_final), axis=1)
             X_final = sparse.csr_matrix(X_final)
-            Y_final = [mapping[instance_to_label[instance]] if instance_to_label[instance]  in mapping else  instance_to_label[instance] for instance in instance_final]
+
+            if mapping:
+                Y_final = [mapping[instance_to_label[instance]] if instance_to_label[instance]  in mapping else  instance_to_label[instance] for instance in instance_final]
+            else:
+                Y_final = [instance_to_label[instance]  for instance in instance_final]
 
             if logger:
                 logger.debug(F"the shape of feature matrix for phenotype {phenotype} of {'-'.join(feature_list)} is {X_final.shape}")

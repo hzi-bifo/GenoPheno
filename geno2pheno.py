@@ -29,7 +29,7 @@ def checkArgs(args):
     if (not os.access(parsedArgs.genyml_path, os.F_OK)):
         err = err + "\nError: Permission denied or could not find the labels!"
         return err
-    G2P = Geno2PhenoPipeline(parsedArgs.genml_path, parsedArgs.overwrite)
+    G2P = Geno2PhenoPipeline(parsedArgs.genyml_path, parsedArgs.overwrite)
     return False
 
 

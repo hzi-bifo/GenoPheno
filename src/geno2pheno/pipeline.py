@@ -70,7 +70,7 @@ class Geno2PhenoPipeline(object):
         if 'number_of_cores' in self.pipeline['metadata']:
             self.number_of_cores = self.pipeline['metadata']['number_of_cores']
 
-        self.logger.info('Meta data has been parsed')
+        self.logger.info('Metadata has been parsed')
 
     def prepare_output_directory_structure(self):
         # make sure the directory exist and handle overriding
@@ -134,40 +134,40 @@ class Geno2PhenoPipeline(object):
 
         self.logger.info('loading the genotype tables')
 
-        for table in tqdm.tqdm(self.pipeline['genotype_tables']['tables']):
+        print(self.pipeline['genotype_tables']['tables'])
 
-            delimiter = None
+        for table in tqdm.tqdm(self.pipeline['genotype_tables']['tables']):
 
             if 'table' not in table:
                 if 'sequence' in table:
                     # TODO: add preprocessing for k-mers
                     # TODO: add bpe unit
-                    if self.overwrite or (not FileUtility.exists(F"{self.output_directory}intermediate_representations/{table['sequence']}_feature_data.npz") or not FileUtility.exists(F"{self.output_directory}intermediate_representations/{table['sequence']}_feature_names.txt") or not FileUtility.exists
-                        (F"{self.output_directory}intermediate_representations/{table['sequence']}_instances.txt")):
+                    if self.overwrite or (not FileUtility.exists(F"{self.output_directory}intermediate_representations/{table['sequence']['name']}_feature_data.npz") or not FileUtility.exists(F"{self.output_directory}intermediate_representations/{table['sequence']['name']}_feature_names.txt") or not FileUtility.exists
+                        (F"{self.output_directory}intermediate_representations/{table['sequence']['name']}_instances.txt")):
                         GenotypeVectorizer.create_seq_kmer_table(F"{self.output_directory}intermediate_representations/",
-                                                             table['path'], table['sequence'],
-                                                             kvalue=table['k_value'], n_cores=self.number_of_cores,
+                                                             table['sequence']['path'], table['sequence']['name'],
+                                                             kvalue=table['sequence']['k_value'], n_cores=self.number_of_cores,
                                                              logger=self.logger,overwrite=self.overwrite)
                     self.list_of_primitive_tables.append(table['sequence'])
                 else:
                     logging.error('The name of table needs to be specified')
                     break
             else:
-                self.list_of_primitive_tables.append(table['table'])
+                self.list_of_primitive_tables.append(table['table']['name'])
 
-                if 'preprocessing' not in table or table['preprocessing'] not in preprocessing_map:
+                if 'preprocessing' not in table or table['table']['preprocessing'] not in preprocessing_map:
                     preprocessing = Preprocessing.NONE
-                    logging.warning(F"No preprocessing is selected for table {table['table']}")
+                    logging.warning(F"No preprocessing is selected for table {table['table']['name']}")
                 else:
-                    preprocessing = preprocessing_map[table['preprocessing']]
+                    preprocessing = preprocessing_map[table['table']['preprocessing']]
 
-                if  table['datatype'] not in data_type_map:
+                if  table['table']['datatype'] not in data_type_map:
                     logging.error("The datatype of table needs to be 'text' or 'numerical'")
                     break
                 else:
-                    datatype = data_type_map[table['datatype']]
+                    datatype = data_type_map[table['table']['datatype']]
 
-                GenotypeVectorizer.create_genotype_table(F"{self.output_directory}intermediate_representations/", table['path'], table['table'], delimiter=table['delimiter'] if 'delimiter' in table else None, preprocessing=preprocessing, datatype=datatype, logger=self.logger, overwrite=self.overwrite)
+                GenotypeVectorizer.create_genotype_table(F"{self.output_directory}intermediate_representations/", table['table']['path'], table['table']['name'], delimiter=table['table']['delimiter'] if 'delimiter' in table['table'] else None, preprocessing=preprocessing, datatype=datatype, logger=self.logger, overwrite=self.overwrite)
 
     def run_prediction_block(self):
         self.logger.info('begin parsing the prediction block')
@@ -175,35 +175,35 @@ class Geno2PhenoPipeline(object):
 
         for prediction in self.pipeline['predictions']:
 
-            self.requested_results[prediction['prediction']]=dict()
+            self.requested_results[prediction['prediction']['name']]=dict()
 
-            self.logger.info(F" * begin with the prediction of {prediction['prediction']}")
+            self.logger.info(F" * begin with the prediction of {prediction['prediction']['name']}")
             # label mapping
-            label_mapping = prediction['label_mapping'] if 'label_mapping' in prediction else None
+            label_mapping = prediction['prediction']['label_mapping'] if 'label_mapping' in prediction else None
             # optimizing for
-            optimized_for = prediction['optimized_for']
+            optimized_for = prediction['prediction']['optimized_for']
             # TODO: make reporting specialized
             # final reporting metrics
-            self.reporting = prediction['reporting']
+            self.reporting = prediction['prediction']['reporting']
             # classifiers
-            classifiers = prediction['classifiers']
+            classifiers = prediction['prediction']['classifiers']
 
-            for feature in prediction['features']:
+            for feature in prediction['prediction']['features']:
 
                 self.logger.info(F" * loading feature {feature['feature']}")
                 feature_list = feature['list']
                 feature_title =  feature['feature']
 
 
-                if feature_title not in self.requested_results[prediction['prediction']]:
-                    self.requested_results[prediction['prediction']][feature_title] = dict()
+                if feature_title not in self.requested_results[prediction['prediction']['name']]:
+                    self.requested_results[prediction['prediction']['name']][feature_title] = dict()
 
                 for phenotype, (X, Y, feature_names, instances) in Genotype_data_load.load_aggregated_data(self.output_directory, feature_list, self.phenotype_table, mapping=label_mapping, logger = self.logger):
 
-                    self.logger.info(F" ** begin with phenotype {phenotype} prediction of {prediction['prediction']}")
+                    self.logger.info(F" ** begin with phenotype {phenotype} prediction of {prediction['prediction']['name']}")
 
-                    if phenotype not in self.requested_results[prediction['prediction']][feature_title]:
-                        self.requested_results[prediction['prediction']][feature_title][phenotype] = dict()
+                    if phenotype not in self.requested_results[prediction['prediction']['name']][feature_title]:
+                        self.requested_results[prediction['prediction']['name']][feature_title][phenotype] = dict()
 
                     if 'validation_tuning' in feature:
                         # read the tune/eval setting
@@ -236,14 +236,14 @@ class Geno2PhenoPipeline(object):
                                 self.logger.warning(f"the method of test split for the feature {feature_title} was not properly specified and tree based is used.")
                         else:
                             test_split_method = None
-                        FileUtility.ensure_dir(F"{self.output_directory}classification/cv/{prediction['prediction']}/", self.logger)
-                        FileUtility.ensure_dir(F"{self.output_directory}classification/cv/{prediction['prediction']}/{validation_tuning_setting['name']}/",
+                        FileUtility.ensure_dir(F"{self.output_directory}classification/cv/{prediction['prediction']['name']}/", self.logger)
+                        FileUtility.ensure_dir(F"{self.output_directory}classification/cv/{prediction['prediction']['name']}/{validation_tuning_setting['name']}/",
                                                self.logger)
                         FileUtility.ensure_dir(
-                            F"{self.output_directory}classification/cv/{prediction['prediction']}/{validation_tuning_setting['name']}/{feature_title}_{phenotype}/",
+                            F"{self.output_directory}classification/cv/{prediction['prediction']['name']}/{validation_tuning_setting['name']}/{feature_title}_{phenotype}/",
                             self.logger)
 
-                        save_directory = F"{self.output_directory}classification/cv/{prediction['prediction']}/{validation_tuning_setting['name']}/{feature_title}_{phenotype}/"
+                        save_directory = F"{self.output_directory}classification/cv/{prediction['prediction']['name']}/{validation_tuning_setting['name']}/{feature_title}_{phenotype}/"
                         tag_setting = validation_tuning_setting['name']
 
                         # TODO: add these two also as input to the GenYML
@@ -276,57 +276,60 @@ class Geno2PhenoPipeline(object):
                         else:
                             test_path = None
 
-                        FileUtility.ensure_dir(F"{self.output_directory}classification/cv/{prediction['prediction']}/",
+                        FileUtility.ensure_dir(F"{self.output_directory}classification/cv/{prediction['prediction']['name']}/",
                                                self.logger)
                         FileUtility.ensure_dir(
-                            F"{self.output_directory}classification/cv/{prediction['prediction']}/{cv_name}/",
+                            F"{self.output_directory}classification/cv/{prediction['prediction']['name']}/{cv_name}/",
                             self.logger)
                         FileUtility.ensure_dir(
-                            F"{self.output_directory}classification/cv/{prediction['prediction']}/{cv_name}/{feature_title}_{phenotype}/",
+                            F"{self.output_directory}classification/cv/{prediction['prediction']['name']}/{cv_name}/{feature_title}_{phenotype}/",
                             self.logger)
 
-                        save_directory = F"{self.output_directory}classification/cv/{prediction['prediction']}/{cv_name}/{feature_title}_{phenotype}/"
+                        save_directory = F"{self.output_directory}classification/cv/{prediction['prediction']['name']}/{cv_name}/{feature_title}_{phenotype}/"
                         tag_setting = predefined_cv['name']
 
                         self.kfold_settings[current_cv].load_predefined_folds(
                             self.phylogenetic_tree, instances, train_path, test_path, y=Y, save_directory=save_directory, tag_setting=tag_setting, save_tree=True, overwrite=self.overwrite, logger=self.logger)
 
 
-                    if cv_name not in self.requested_results[prediction['prediction']][feature_title][phenotype]:
-                        self.requested_results[prediction['prediction']][feature_title][phenotype][cv_name] = []
+                    if cv_name not in self.requested_results[prediction['prediction']['name']][feature_title][phenotype]:
+                        self.requested_results[prediction['prediction']['name']][feature_title][phenotype][cv_name] = []
+
+                    if type(classifiers)==list:
+                        classifiers = {c:{'param_config':None} for c in classifiers}
 
                     for classifier, config in tqdm.tqdm(classifiers.items()):
 
                         self.logger.info(
-                            F" *** begin with classifier {classifier} for phenotype {phenotype} prediction of {prediction['prediction']}")
-                        FileUtility.ensure_dir(F"{self.output_directory}classification/{prediction['prediction']}/", self.logger)
-                        FileUtility.ensure_dir(F"{self.output_directory}feature_selection/{prediction['prediction']}/", self.logger)
+                            F" *** begin with classifier {classifier} for phenotype {phenotype} prediction of {prediction['prediction']['name']}")
+                        FileUtility.ensure_dir(F"{self.output_directory}classification/{prediction['prediction']['name']}/", self.logger)
+                        FileUtility.ensure_dir(F"{self.output_directory}feature_selection/{prediction['prediction']['name']}/", self.logger)
 
                         if classifier == 'lsvm':
                             if self.overwrite or not FileUtility.exists(
-                                    F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
+                                    F"{self.output_directory}classification/{prediction['prediction']['name']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
                                 model = SVM(X, Y, instances, feature_names=feature_names, svm_param_config_file=config['param_config'], logger=self.logger, linear=True)
-                                model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
+                                model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']['name']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
 
                         if classifier == 'rf':
                             if self.overwrite or not FileUtility.exists(
-                                    F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
+                                    F"{self.output_directory}classification/{prediction['prediction']['name']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
                                 model = RandomForest(X, Y, instances, feature_names=feature_names, rf_param_config_file=config['param_config'], logger=self.logger, linear=True)
-                                model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
+                                model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']['name']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
 
                         if classifier == 'lr':
                             if self.overwrite or not FileUtility.exists(
-                                    F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
+                                    F"{self.output_directory}classification/{prediction['prediction']['name']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
                                 model = LogisticRegressionClassifier(X, Y, instances, feature_names=feature_names, lr_param_config_file=config['param_config'], logger=self.logger, linear=True)
-                                model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
+                                model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']['name']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
 
                         if classifier == 'svm':
-                            if self.overwrite or not FileUtility.exists(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
+                            if self.overwrite or not FileUtility.exists(F"{self.output_directory}classification/{prediction['prediction']['name']}/{feature_title}_{phenotype}_{cv_name}_{classifier}.pickle"):
 
                                 model = SVM(X, Y, instances, feature_names=feature_names, svm_param_config_file=config['param_config'], logger=self.logger)
-                                model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
+                                model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']['name']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
 
-                        self.requested_results[prediction['prediction']][feature_title][phenotype][cv_name].append(classifier)
+                        self.requested_results[prediction['prediction']['name']][feature_title][phenotype][cv_name].append(classifier)
 
         FileUtility.save_json(F"{self.output_directory}classification/results_track.json", self.requested_results, overwrite=self.overwrite, logger=self.logger)
 

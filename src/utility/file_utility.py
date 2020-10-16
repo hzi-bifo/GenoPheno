@@ -13,7 +13,6 @@ import fnmatch
 import os
 import numpy as np
 from Bio import SeqIO
-from Bio.Alphabet import generic_dna
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from scipy import sparse
@@ -29,7 +28,7 @@ class FileUtility(object):
     @staticmethod
     def create_fasta_file(file_address, corpus, label):
         seq_id_pairs = [('.'.join([str(idx + 1), label[idx]]), x) for idx, x in enumerate(corpus)]
-        seq_recs = [SeqRecord(Seq(seq, generic_dna), id=id, description='') for id, seq in seq_id_pairs]
+        seq_recs = [SeqRecord(Seq(seq), id=id, description='') for id, seq in seq_id_pairs]
         SeqIO.write(seq_recs, file_address, "fasta")
 
 
