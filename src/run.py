@@ -32,7 +32,7 @@ def run_test():
 
     prepare(sys.argv[1])
     os.chdir('/tmp/unpack')
-    geno2pheno = Geno2PhenoPipeline(F"config.yaml", overwrite=True, cores=30, replace_list=[])
+    geno2pheno = Geno2PhenoPipeline(F"config.yml", overwrite=True, cores=30, replace_list=[])
     generate(sys.argv[2], sys.argv[3])
     time.sleep(120)
     shutil.rmtree('/tmp/unpack')
