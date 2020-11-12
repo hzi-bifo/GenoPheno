@@ -1,23 +1,23 @@
 metadata:
   project: test_package
-  phylogenetic_tree: "data/phylogentictree.txt"
-  phenotype_table: "data/phenotypes.txt"
-  output_directory: "output/"
+  phylogenetic_tree: "%(PROJDIR)%/phylogentictree.txt"
+  phenotype_table: "%(PROJDIR)%/phenotypes.txt"
+  output_directory: "%(OUTDIR)%/"
   number_of_cores: 40
 
 genotype_tables:
   tables:
     - table: 'genexp'
-      path: "data/genexp.csv"
+      path: "%(PROJDIR)%/genexp.csv"
       preprocessing: none
       delimiter: ","
       datatype: numerical
     - table: 'gpa'
-      path: "data/genotype_table.txt"
+      path: "%(PROJDIR)%/genotype_table.txt"
       preprocessing: binary
       datatype: text
     - sequence: '6mer'
-      path: "data/sequences/"
+      path: "%(PROJDIR)%/sequences/"
       preprocessing: l1
       k_value: 6
 
@@ -48,10 +48,10 @@ predictions:
         use_validation_tuning: "cv_tree"
     classifiers:
       lsvm:
-        param_config: "configs/scikit_models/svm/test_cvs.json"
+        param_config: "%(config)%/scikit_models/svm/test_cvs.json"
       svm:
-        param_config: "configs/scikit_models/svm/test_svm.json"
+        param_config: "%(config)%/scikit_models/svm/test_svm.json"
       lr:
-        param_config: "configs/scikit_models/lr/test_lr.json"
+        param_config: "%(config)%/scikit_models/lr/test_lr.json"
       rf:
-        param_config: "configs/scikit_models/rf/test_rf.json"
+        param_config: "%(config)%/scikit_models/rf/test_rf.json"
