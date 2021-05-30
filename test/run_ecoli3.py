@@ -7,8 +7,8 @@ DATA_DIR = os.path.dirname(__file__) + "/../data"
 
 
 def run_ecoli():
-    for phenotype in ['amoxicillin_clavulanic_acid','amoxicillin-clavulanate','amoxicillin','ampicillin']:
-        geno2pheno = Geno2PhenoPipeline(F"/net/sgi/metagenomics/nobackup/prot/revisit_Geno2Pheno_2021/EColi_Sep/datasets/template_EColi.yaml", overwrite=True, cores=20,
+    for phenotype in ['ciprofloxacin', 'gentamicin', 'piperacillin_tazobactam', 'tetracycline', 'trimethoprim']:
+        geno2pheno = Geno2PhenoPipeline(F"/net/sgi/metagenomics/nobackup/prot/revisit_Geno2Pheno_2021/EColi_Sep/datasets/template_EColi.yaml", overwrite=True, cores=30,
                                     replace_list=[('%(phenotype)%', phenotype)])
 
 run_ecoli()

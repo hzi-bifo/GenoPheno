@@ -178,7 +178,7 @@ class Geno2PhenoPipeline(object):
 
             self.logger.info(F" * begin with the prediction of {prediction['prediction']['name']}")
             # label mapping
-            label_mapping = prediction['prediction']['label_mapping'] if 'label_mapping' in prediction else None
+            label_mapping = prediction['prediction']['label_mapping'] if 'label_mapping' in prediction['prediction'] else None
             # optimizing for
             optimized_for = prediction['prediction']['optimized_for']
             # TODO: make reporting specialized
