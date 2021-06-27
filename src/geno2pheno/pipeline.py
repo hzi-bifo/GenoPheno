@@ -6,6 +6,8 @@ import pandas as pd
 import copy
 GENO2PHENO_DIR = os.path.dirname(__file__) + "/../"
 sys.path.append(GENO2PHENO_DIR)
+sys.path.append(GENO2PHENO_DIR+'/../')
+
 import logging
 from src.phenotype_util.phenotype_table import PhenotypeTable
 from src.genotyoe_util.genotype_create_utility import *
@@ -16,6 +18,7 @@ from src.validation_tuning.tune_eval import TuneEvalSteps
 from src.validation_tuning.metrics import Scoring
 from src.utility.color_utility import ColorUtility
 from src.utility.list_set_util import *
+from src.feature_selection.chi2 import Chi2Analysis
 import plotly.graph_objects as go
 
 class Geno2PhenoPipeline(object):
@@ -328,6 +331,11 @@ class Geno2PhenoPipeline(object):
 
                                 model = SVM(X, Y, instances, feature_names=feature_names, svm_param_config_file=config['param_config'], logger=self.logger)
                                 model.tune_and_eval(F"{self.output_directory}classification/{prediction['prediction']['name']}/{feature_title}_{phenotype}_{cv_name}_{classifier}", inner_cv, self.kfold_settings[current_cv], optimizing_score=optimized_for, n_jobs=self.number_of_cores,overwrite=self.overwrite,logger=self.logger)
+
+                        # produce top 100 Chi2 features
+                        chi = Chi2Analysis(X, Y, feature_names)
+                        chi.extract_features_fdr(F"{self.output_directory}feature_selection/{prediction['prediction']['name']}/{feature_title}_{phenotype}_{cv_name}_chi2.txt", binarization=False, N=100)
+
 
                         self.requested_results[prediction['prediction']['name']][feature_title][phenotype][cv_name].append(classifier)
 

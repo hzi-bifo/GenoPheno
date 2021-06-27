@@ -6,9 +6,10 @@ __email__ = "ehsan.asgari@gmail.com"
 __source__ = "from personal repo"
 
 import os
-GENO2PHENO_DIR = os.path.dirname(__file__) + "/../"
+GENO2PHENO_DIR = os.path.dirname(__file__) + "/../../"
 import sys
 sys.path.append(GENO2PHENO_DIR)
+
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 from ete3 import Tree, TreeStyle, NodeStyle, faces, AttrFace, CircleFace, TextFace, RectFace, ProfileFace

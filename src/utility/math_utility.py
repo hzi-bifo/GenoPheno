@@ -9,13 +9,32 @@ from scipy import stats
 from sklearn.preprocessing import normalize
 import numpy as np
 
+from scipy.special import rel_entr
+
+def entropy_custom(pk, qk=None, base=None, axis=0):
+    """custom version of entropy without shape requirements"""
+    pk = np.asarray(pk)
+    pk = 1.0*pk / np.sum(pk, axis=axis, keepdims=True)
+    if qk is None:
+        vec = stats.entropy(pk)
+    else:
+        qk = np.asarray(qk)
+        # if qk.shape != pk.shape:
+        #     raise ValueError("qk and pk must have same shape.")
+        qk = 1.0*qk / np.sum(qk, axis=axis, keepdims=True)
+        vec = rel_entr(pk, qk)
+    S = np.sum(vec, axis=axis)
+    if base is not None:
+        S /= np.log(base)
+    return S
+
 def get_kl_rows(A):
     '''
     :param A: matrix A
     :return: Efficient implementation to calculate kl-divergence between rows in A
     '''
-    norm_A=normalize(A+1e-100, norm='l1')
-    return stats.entropy(norm_A.T[:,:,None], norm_A.T[:,None,:])
+    norm_A = normalize(A + 1e-100, norm='l1')
+    return entropy_custom(norm_A.T[:,:,None], norm_A.T[:,None,:])
 
 def generate_binary(N):
     '''
@@ -31,7 +50,7 @@ def get_sym_kl_rows(A):
     :return: Efficient implementation to calculate kl-divergence between rows in A
     '''
     norm_A=normalize(A+np.finfo(np.float64).eps, norm='l1')
-    a=stats.entropy(norm_A.T[:,:,None], norm_A.T[:,None,:])
+    a=entropy_custom(norm_A.T[:,:,None], norm_A.T[:,None,:])
     return a+a.T
 
 def get_kl_rows(A):
@@ -40,7 +59,7 @@ def get_kl_rows(A):
     :return: Efficient implementation to calculate kl-divergence between rows in A
     '''
     norm_A=normalize(A+np.finfo(np.float64).eps, norm='l1')
-    return stats.entropy(norm_A.T[:,:,None], norm_A.T[:,None,:])
+    return entropy_custom(norm_A.T[:,:,None], norm_A.T[:,None,:])
 
 def normalize_mat(A,norm ='l1', axis=1):
     '''
@@ -114,3 +133,16 @@ def get_borders(mylist):
                 borders.append(i)
                 val=v
     return borders
+
+def jensen_shannon(query, matrix):
+    """
+    This function implements a Jensen-Shannon similarity
+    between the input query (an LDA topic distribution for a document)
+    and the entire corpus of topic distributions.
+    It returns an array of length M where M is the number of documents in the corpus
+    """
+    # lets keep with the p,q notation above
+    p = query[None,:].T + np.zeros(matrix.T.shape()) # take transpose
+    q = matrix.T # transpose matrix
+    m = 0.5*(p + q)
+    return np.sqrt(0.5*(stats.entropy(p,m) + stats.entropy(q,m)))
