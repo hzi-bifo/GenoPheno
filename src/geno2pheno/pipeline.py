@@ -157,8 +157,7 @@ class Geno2PhenoPipeline(object):
                     break
             else:
                 self.list_of_primitive_tables.append(table['table']['name'])
-
-                if 'preprocessing' not in table or table['table']['preprocessing'] not in preprocessing_map:
+                if 'preprocessing' not in table['table'] or table['table']['preprocessing'] not in preprocessing_map:
                     preprocessing = Preprocessing.NONE
                     logging.warning(F"No preprocessing is selected for table {table['table']['name']}")
                 else:
@@ -182,7 +181,7 @@ class Geno2PhenoPipeline(object):
 
             self.logger.info(F" * begin with the prediction of {prediction['prediction']['name']}")
             # label mapping
-            label_mapping = prediction['prediction']['label_mapping'] if 'label_mapping' in prediction else None
+            label_mapping = prediction['prediction']['label_mapping'] if 'label_mapping' in prediction['prediction'] else None
             # optimizing for
             optimized_for = prediction['prediction']['optimized_for']
             # TODO: make reporting specialized
