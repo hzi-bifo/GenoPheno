@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 import os
 import sys
 import tqdm
@@ -18,8 +22,15 @@ from src.validation_tuning.tune_eval import TuneEvalSteps
 from src.validation_tuning.metrics import Scoring
 from src.utility.color_utility import ColorUtility
 from src.utility.list_set_util import *
+from src.utility.math_utility import *
+from scipy.special import softmax
+from src.clustering_models.hierarchical_clustering import HierarchicalClutering
 from src.feature_selection.chi2 import Chi2Analysis
 import plotly.graph_objects as go
+import sklearn
+import re
+from nltk import FreqDist
+
 
 class Geno2PhenoPipeline(object):
 
@@ -337,7 +348,8 @@ class Geno2PhenoPipeline(object):
 
 
                         self.requested_results[prediction['prediction']['name']][feature_title][phenotype][cv_name].append(classifier)
-
+            self.create_biomarkers(prediction)
+                                                 
         FileUtility.save_json(F"{self.output_directory}classification/results_track.json", self.requested_results, overwrite=self.overwrite, logger=self.logger)
 
     def prepare_report(self):
@@ -421,3 +433,83 @@ class Geno2PhenoPipeline(object):
                     fig.update_traces(orientation='h')  # horizontal box plots
                     fig.write_image(F"{self.output_directory}reports/classification/{phentype}_{classifier}_{metric}.pdf")
 
+    
+                                                 
+                                                 
+
+    @staticmethod
+    def preprocess_feature_names(features):
+        return [re.sub("[^0-9a-zA-Z]+", "-", f) for f in features]
+
+    def create_biomarkers(self, prediction, topk=100):
+        from matplotlib import rcParams
+        rcParams['font.family'] = 'sans-serif'
+        rcParams['font.sans-serif'] = ['Tahoma']                                                 
+        all_files = FileUtility.recursive_glob(F"{self.output_directory}feature_selection/{prediction['prediction']['name']}",'*.txt')
+                                               
+        feature_types = list(set([file.split('/')[-1].split('_')[0] for file in all_files]))
+
+        for feature_type in feature_types:
+            
+            if FileUtility.exists(F'{self.output_directory}/intermediate_representations/{feature_type}_feature_data.npz'):
+                                               
+                all_files = FileUtility.recursive_glob(F"{self.output_directory}feature_selection/{prediction['prediction']['name']}",F'{feature_type}*.txt')
+
+                complete_feature_dir = dict()
+                complete_feature_sets = dict()
+
+                for file in all_files:
+
+                    name = '_'.join(file.split('/')[-1].split('.')[0].split('_')[0:-1])
+
+                    if name not in complete_feature_dir:
+                        complete_feature_dir[name]=dict()
+
+                    method = file.split('/')[-1].split('.')[0].split('_')[-1]
+
+                    if name not in complete_feature_sets:
+                        complete_feature_sets[name] = {method:pd.read_csv(file,sep='\t').feature.to_list()[0:topk]}
+                    else:
+                        complete_feature_sets[name][method] = pd.read_csv(file,sep='\t').feature.to_list()[0:topk]
+
+                    if method.lower() in ['lsvm', 'lr','chi2']:
+                        df_temp = pd.read_csv(file, sep='\t')[0:topk]
+                        for x,y in pd.Series(['Pos-phenotype' if x > 0 else 'Neg-phenotype' for x in df_temp.score.to_list()], index = df_temp.feature.to_list()).to_dict().items():
+                            complete_feature_dir[name][x] = y 
+
+
+                                                       
+                for name, feature_sets in complete_feature_sets.items():
+                    features = list(itertools.chain(*[y for x,y in feature_sets.items()]))
+                    feature_dir = complete_feature_dir[name]
+                    # markers
+                    df = pd.DataFrame([[x,y,feature_dir[x] if x in feature_dir else np.nan] for x,y in FreqDist(features).most_common()], columns=['Features', 'Confirmed_by','Direction (by SVM, LR, Chi2)'])
+
+
+                    X=FileUtility.load_sparse_csr(F'{self.output_directory}/intermediate_representations/{feature_type}_feature_data.npz').toarray()
+                    feature_names = [x for x in FileUtility.load_list(F'{self.output_directory}/intermediate_representations/{feature_type}_feature_names.txt')]    
+                    feature_idxs = [feature_names.index(x) for x in df.Features.tolist()]
+                    markers = X[:,feature_idxs]
+
+                    # method
+                    methods = list(feature_sets.keys())
+                    methods.sort()
+
+                    # heatmap creation
+                    heatmap={Geno2PhenoPipeline.preprocess_feature_names([f])[0]:[1 if f in feature_sets[m]  else 0  for m in methods] for f in df.Features.tolist()}
+
+                    marker_to_class={Geno2PhenoPipeline.preprocess_feature_names([f])[0]:df[df['Features']==f]['Direction (by SVM, LR, Chi2)'].to_list()[0] for f in df.Features.tolist()}
+
+                    if np.any(markers.T<0):
+                        matrix = get_sym_kl_rows(softmax(markers.T,axis=1))
+                    else:
+                        matrix = get_sym_kl_rows(markers.T)
+
+                    hc = HierarchicalClutering(matrix, Geno2PhenoPipeline.preprocess_feature_names(df.Features.tolist()))
+
+                    tree = VisualizeCircularTree(hc.nwk)
+                    title = F"Markers for {prediction['prediction']['name']}\n Different feature selection methods confirming the marker are shown in the node vectors (outer to inner : {', '.join(methods)})"
+                    tree.create_circle(F"{self.output_directory}reports/marker_{feature_type}_{prediction['prediction']['name']}", title , name2color=None, name2class_dic=marker_to_class, class2color_dic={'Pos-phenotype':'#f8e0ff','Neg-phenotype':'#cce9ff'}, vector=heatmap,
+                                      ignore_branch_length=False)                
+
+                                                 

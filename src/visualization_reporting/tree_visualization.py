@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 __author__ = "Ehsaneddin Asgari"
 __license__ = "To be added -- for now all rights are reserved for the author"
 __version__ = "1.0.0"
@@ -33,7 +36,8 @@ class VisualizeCircularTree(object):
         plt.rc('ytick', labelsize=0.1)
         plt.rc({'font.size': 0.1})
 
-
+        plt.rc('font', **{'sans-serif' : 'Arial',
+                         'family' : 'sans-serif'})
 
         # legend creation
         if name2class_dic and class2color_dic:
@@ -43,7 +47,7 @@ class VisualizeCircularTree(object):
 
         t = Tree(self.nwk)
 
-        font_size=int(len(list(t.iter_leaves()))/2)
+        font_size=max(5,int(len(list(t.iter_leaves()))/3))
 
         # iterate over tree leaves only
         for l in t.iter_leaves():
@@ -78,7 +82,7 @@ class VisualizeCircularTree(object):
         ts.show_branch_length = True
         ts.show_branch_support = True
         ts.force_topology = ignore_branch_length
-        ts.title.add_face(TextFace(title, fsize=font_size, ftype='Times'), column=15)
+        ts.title.add_face(TextFace(title, fsize=font_size), column=15)
 
         # legend creation
         if name2class_dic and class2color_dic:
@@ -89,7 +93,7 @@ class VisualizeCircularTree(object):
                 x = RectFace(100, 100, 'black', col)
                 # x.opacity=0.5
                 ts.legend.add_face(x, column=8)
-                ts.legend.add_face(TextFace(' ' + str(cls) + '   ', fsize=font_size, ftype='Times'), column=9)
+                ts.legend.add_face(TextFace(' ' + str(cls) + '   ', fsize=font_size), column=9)
 
         if not FileUtility.exists(F"{filename}.pdf") or self.overwrite:
             t.render(F"{filename}.pdf", tree_style=ts, dpi=5000)

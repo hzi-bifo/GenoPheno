@@ -1,8 +1,15 @@
+import os
+GENO2PHENO_DIR = os.path.dirname(__file__) + "/../"
+MODEL_CONFIG_DIR = os.path.dirname(__file__) + "/../../data/configs/scikit_models/"
+import sys
+sys.path.append(GENO2PHENO_DIR)
+from src.utility.file_utility import FileUtility
 import pandas as pd
 import codecs
 import math
 import operator
 import numpy as np
+import sklearn
 from sklearn.feature_selection import SelectFdr
 from sklearn.feature_selection import chi2
 from scipy.sparse import csr_matrix
@@ -16,6 +23,8 @@ class Chi2Analysis(object):
         :param feature_names: list of X columns
         '''
         self.X = X
+        if (self.X.toarray()<0).any():
+            self.X=csr_matrix(np.exp(self.X.toarray()))
         self.Y = Y
         self.feature_names = feature_names
 
@@ -54,6 +63,7 @@ class Chi2Analysis(object):
         pos_scores = []
 
         extracted_features=[]
+        sorted_idxs_of_coefficients = []
         for w, score in scores:
             feature_array = X[:, self.feature_names.index(w)]
             pos = [feature_array[idx] for idx, x in enumerate(self.Y) if x == 1]
@@ -75,7 +85,8 @@ class Chi2Analysis(object):
             if allow_subseq:
                 pos_scores.append([str(w), s, score[1], m_pos, m_neg])
                 #if m_pos> m_neg:
-                f.write('\t'.join([str(w), str(s), str(score[1])] + [str(x) for x in [m_pos, s_pos, m_neg, s_neg]]) + '\n')
+                #f.write('\t'.join([str(w), str(s), str(score[1])] + [str(x) for x in [m_pos, s_pos, m_neg, s_neg]]) + '\n')
+                sorted_idxs_of_coefficients.append([str(w), str(s)])
             else:
                 flag=False
                 for feature in extracted_features:
@@ -83,7 +94,15 @@ class Chi2Analysis(object):
                         flag=True
                 if not flag:
                     pos_scores.append([str(w), s, score[1], m_pos, m_neg])
-                    f.write('\t'.join([str(w), str(s), str(score[1])] + [str(x) for x in [m_pos, s_pos, m_neg, s_neg]]) + '\n')
+                    sorted_idxs_of_coefficients.append([str(w), str(s)])
+                    #f.write('\t'.join([str(w), str(s), str(score[1])] + [str(x) for x in [m_pos, s_pos, m_neg, s_neg]]) + '\n')
 
         f.close()
+        
+        FileUtility.save_list(file_name,
+                                  ['\t'.join(['feature', 'score'])] + [
+                                      '\t'.join([w,s]) for w,s in
+                                      sorted_idxs_of_coefficients])
+
+        
         return pos_scores
