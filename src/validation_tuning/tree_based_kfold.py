@@ -152,6 +152,7 @@ class TreeBasedKFold(_BaseKFold):
 
         # TODO: handle prefix instances too ISO1 ISO11
         self.reset()
+        print(instance_list)                           
         self.instance_list = instance_list
         self.tree_newick = tree_newick
         self.train_indices = list(range(len(instance_list)))
@@ -197,7 +198,7 @@ class TreeBasedKFold(_BaseKFold):
                     # else completely random
                     else:
                         sss = ShuffleSplit(n_splits=1, test_size=test_ratio, random_state=random_state)
-                        try:
+                        try:                            
                             self.test_indices = list(sss.split(self.instance_list, y))[0][1].tolist()
                         except:
                             raise ValueError('The test ratio does not match the number of instance')

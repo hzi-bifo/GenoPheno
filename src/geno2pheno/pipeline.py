@@ -134,8 +134,6 @@ class Geno2PhenoPipeline(object):
 
         self.logger.info('loading the genotype tables')
 
-        print(self.pipeline['genotype_tables']['tables'])
-
         for table in tqdm.tqdm(self.pipeline['genotype_tables']['tables']):
 
             if 'table' not in table:
@@ -166,7 +164,9 @@ class Geno2PhenoPipeline(object):
                 else:
                     datatype = data_type_map[table['table']['datatype']]
 
-                GenotypeVectorizer.create_genotype_table(F"{self.output_directory}intermediate_representations/", table['table']['path'], table['table']['name'], delimiter=table['table']['delimiter'] if 'delimiter' in table['table'] else None, preprocessing=preprocessing, datatype=datatype, logger=self.logger, overwrite=self.overwrite)
+                if self.overwrite or (not FileUtility.exists(F"{self.output_directory}intermediate_representations/{table['table']['name']}_feature_data.npz") or not FileUtility.exists(F"{self.output_directory}intermediate_representations/{table['table']['name']}_feature_names.txt") or not FileUtility.exists
+                                        (F"{self.output_directory}intermediate_representations/{table['table']['name']}_instances.txt")):                                    
+                    GenotypeVectorizer.create_genotype_table(F"{self.output_directory}intermediate_representations/", table['table']['path'], table['table']['name'], delimiter=table['table']['delimiter'] if 'delimiter' in table['table'] else None, preprocessing=preprocessing, datatype=datatype, logger=self.logger, overwrite=self.overwrite)
 
     def run_prediction_block(self):
         self.logger.info('begin parsing the prediction block')
@@ -359,8 +359,12 @@ class Geno2PhenoPipeline(object):
                 nonnested_performance = [Scoring.functions[metric](x, y) for x, y in
                                          full_res_dict['nonnested_cv_true_pred_list']]
 
-                test_performance = Scoring.functions[metric](full_res_dict['test_true_pred_list'][0],full_res_dict['test_true_pred_list'][1])
-
+                try:                                  
+                    test_performance = Scoring.functions[metric](full_res_dict['test_true_pred_list'][0],full_res_dict['test_true_pred_list'][1])
+                except:
+                    #TODO                             
+                    test_performance = -1
+                                                    
                 row_table.append(
                     F"{np.round(np.mean(nested_performance), 2)} ± {np.round(np.std(nested_performance), 2)}")
                 row_table.append(
