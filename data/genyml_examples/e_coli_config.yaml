@@ -1,0 +1,40 @@
+metadata:
+  project: ecoli
+  phylogenetic_tree: "/Users/ehsan/Projects/BIFO/AMR/patric_data_geno2pheno/tree.txt"
+  phenotype_table: "/Users/ehsan/Projects/BIFO/AMR/patric_data_geno2pheno/phenotype.csv"
+  output_directory: "/Users/ehsan/Projects/BIFO/AMR/patric_data_geno2pheno/EColi_res_test/"
+  number_of_cores: 6
+
+genotype_tables:
+  tables:
+    - table:
+          name: '6mers'
+          path: "/Users/ehsan/Projects/BIFO/AMR/patric_data_geno2pheno/6-mer_profile.csv"
+          preprocessing: "l1"
+          delimiter: "\t"
+          datatype: numerical
+
+predictions:
+  - prediction:
+        name: "ecoli_amr_pred"
+        label_mapping:
+          'R': 1
+          'S': 0
+        optimized_for: "f1_macro"
+        reporting: ['accuracy', 'f1_pos', 'f1_macro']
+        features:
+          - feature: "6mers"
+            list: ['6mers']
+            validation_tuning:
+              name: "cv_rand"
+              train:
+                method: "random"
+                folds: 10
+              test:
+                method: "random"
+                ratio: 0.1
+              inner_cv: 10
+        classifiers:
+          - lsvm
+          - lr
+          - rf
